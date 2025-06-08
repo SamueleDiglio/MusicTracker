@@ -1,0 +1,49 @@
+.album-card-background {
+  background-color: var(--nero1);
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 200px;
+}
+
+.album-card-background img {
+  width: 200px;
+  border-radius: 4px;
+}
+
+.album-card-background h3 {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+
+.album-card-background p {
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.album-card-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0px;
+}
+
+.album-card-icon {
+  font-size: 24px;
+}
+
+.checked {
+  color: var(--verde);
+}
+
+.button-icon {
+  all: unset;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.button-icon:hover {
+  color: var(--verde);
+}
