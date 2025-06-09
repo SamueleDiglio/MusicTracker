@@ -8,7 +8,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+
   --bianco: #ffffff;
   --nero1: #212121;
   --nero2: #121212;
@@ -20,7 +20,21 @@
 body {
   margin: 0;
   padding: 1rem;
+}
 
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: var(--bianco);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: var(--verde);
 }
 
 .title {
@@ -74,15 +88,4 @@ body {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
-

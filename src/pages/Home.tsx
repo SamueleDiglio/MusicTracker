@@ -127,7 +127,9 @@ const Home = () => {
   return (
     <>
       {user ? (
-        <h1 className="title">Ciao {user?.name.split(" ")[0]}! Cosa ascolterai oggi?</h1>
+        <h1 className="title">
+          Ciao {user?.name.split(" ")[0]}! Cosa ascolterai oggi?
+        </h1>
       ) : (
         <h1 className="title">Ciao! Cosa ascolterai oggi?</h1>
       )}
