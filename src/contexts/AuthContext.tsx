@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { account } from '../lib/appwrite';
-import type { Models } from 'appwrite';
-import { ID } from 'appwrite';
+import { createContext, useContext, useState, useEffect } from "react";
+import { account } from "../lib/appwrite";
+import type { Models } from "appwrite";
+import { ID } from "appwrite";
 
 interface AuthContextType {
   user: Models.User<Models.Preferences> | null;
@@ -14,7 +14,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
+  const [user, setUser] = useState<Models.User<Models.Preferences> | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const currentUser = await account.get();
       setUser(currentUser);
     } catch (error) {
-      console.error('Check user error:', error);
+      console.error("Check user error:", error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -38,26 +40,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.createEmailPasswordSession(email, password);
       await checkUser();
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     }
   }
-  
 
   async function register(email: string, password: string, name: string) {
     try {
       await account.create(ID.unique(), email, password, name);
-      
+
       await login(email, password);
     } catch (error: any) {
-      console.error('Registration error:', error.message, error.code, error.response);
+      console.error(
+        "Registration error:",
+        error.message,
+        error.code,
+        error.response
+      );
       throw error;
     }
   }
-  
 
   async function logout() {
-    await account.deleteSession('current');
+    await account.deleteSession("current");
     setUser(null);
   }
 
@@ -66,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     login,
     register,
-    logout
+    logout,
   };
 
   return (
@@ -78,6 +83,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }

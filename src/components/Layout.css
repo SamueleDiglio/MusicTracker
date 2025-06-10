@@ -25,8 +25,57 @@ nav {
 }
 
 .search-input {
-  width: 100%;
+  width: 300px;
   padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ddd;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  z-index: 2;
+  background: var(--nero1);
+  overflow: auto;
+  max-height: 400px;
+  border-radius: 8px;
+}
+
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-results-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+}
+
+.search-result-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.search-result-info {
+  flex: 1;
+}
+
+.search-result-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.search-result-artist {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #888;
 }

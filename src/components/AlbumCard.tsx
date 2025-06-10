@@ -116,6 +116,10 @@ const AlbumCard = ({
     }
   };
 
+  useEffect(() => {
+    setIsListened(listened);
+  }, [listened]);
+
   return (
     <div className="album-card-background">
       <img src={image} alt={albumName} />

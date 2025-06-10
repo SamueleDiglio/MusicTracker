@@ -13,13 +13,26 @@ export interface UserAlbum {
   listened: boolean;
 }
 
+// Funzione per normalizzare albumId (minuscolo, senza spazi, rimuove suffissi -0, -1, ...)
+const normalizeAlbumId = (albumId: string) => {
+  let normalized = albumId.trim().toLowerCase();
+  normalized = normalized.replace(/-\d+$/, "");
+  return normalized;
+};
+
 export const albumService = {
   async addUserAlbum(userId: string, album: UserAlbum) {
     try {
+      // Normalizzo l'albumId prima di cercare duplicati e salvarlo
+      const normalizedAlbumId = normalizeAlbumId(album.albumId);
+
       const existing = await databases.listDocuments(
         MUSIC_DB_ID,
         USER_ALBUMS_COLLECTION_ID,
-        [Query.equal("userId", userId), Query.equal("albumId", album.albumId)]
+        [
+          Query.equal("userId", userId),
+          Query.equal("albumId", normalizedAlbumId),
+        ]
       );
       if (existing.total > 0) {
         throw new Error("Album already added to list.");
@@ -31,11 +44,11 @@ export const albumService = {
         ID.unique(),
         {
           userId,
-          albumId: album.albumId,
+          albumId: normalizedAlbumId,
           albumName: album.albumName,
           artistName: album.artistName,
           image: album.image,
-          listened: false,
+          listened: album.listened,
         }
       );
     } catch (error) {
@@ -45,16 +58,35 @@ export const albumService = {
   },
 
   async getUserAlbums(userId: string) {
-    try {
-      return await databases.listDocuments(
+    console.log("Fetching albums for userId:", userId);
+
+    let allAlbums: any[] = [];
+    let cursor: string | null = null;
+    let hasMore = true;
+
+    while (hasMore) {
+      const queries = [Query.equal("userId", userId), Query.limit(100)];
+      if (cursor) {
+        queries.push(Query.cursorAfter(cursor));
+      }
+
+      const response = await databases.listDocuments(
         MUSIC_DB_ID,
         USER_ALBUMS_COLLECTION_ID,
-        [Query.equal("userId", userId)]
+        queries
       );
-    } catch (error) {
-      console.error("Error fetching user albums:", error);
-      throw error;
+
+      allAlbums = [...allAlbums, ...response.documents];
+
+      if (response.documents.length < 100) {
+        hasMore = false;
+      } else {
+        cursor = response.documents[response.documents.length - 1].$id;
+      }
     }
+
+    console.log("Total albums fetched:", allAlbums.length);
+    return { documents: allAlbums };
   },
 
   async updateAlbumRating(documentId: string, rating: number) {
