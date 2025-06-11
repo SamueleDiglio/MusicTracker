@@ -14,7 +14,7 @@ interface UserAlbum {
   listened: boolean;
 }
 
-const SCROLL_AMOUNT = 700;
+const SCROLL_AMOUNT = 900;
 
 const Home = () => {
   const {
@@ -31,9 +31,15 @@ const Home = () => {
   const { user } = useAuth();
   const [userAlbums, setUserAlbums] = useState<UserAlbum[]>([]);
 
-  const popSliderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
-  const rapSliderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
-  const userSliderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
+  const popSliderRef = useRef<HTMLDivElement>(
+    null
+  ) as React.RefObject<HTMLDivElement>;
+  const rapSliderRef = useRef<HTMLDivElement>(
+    null
+  ) as React.RefObject<HTMLDivElement>;
+  const userSliderRef = useRef<HTMLDivElement>(
+    null
+  ) as React.RefObject<HTMLDivElement>;
 
   const [userSliderOverflow, setUserSliderOverflow] = useState(false);
 
@@ -59,12 +65,11 @@ const Home = () => {
 
     const interval = setInterval(() => {
       fetchUserAlbums();
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [user, fetchUserAlbums]);
 
-  
   useEffect(() => {
     const el = userSliderRef.current;
     if (!el) return;

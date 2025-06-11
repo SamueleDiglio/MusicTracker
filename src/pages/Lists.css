@@ -1,19 +1,19 @@
 .list-container {
   display: flex;
-  gap: 16px;
   flex-wrap: wrap;
   justify-content: flex-start;
+  gap: 11px;
 }
 
 .list-album {
   background-color: var(--nero1);
   padding: 16px;
   border-radius: 8px;
-  max-width: 188px;
+  width: 10vw;
 }
 
 .list-album img {
-  width: 188px;
+  width: 100%;
   border-radius: 4px;
 }
 
@@ -40,4 +40,22 @@
   color: var(--bianco);
   background-color: red;
   margin-top: 8px;
+}
+
+@media (width < 1080px) {
+  .list-album {
+    width: 22vw;
+  }
+}
+
+@media (width <= 425px) {
+  .list-album {
+    width: 37vw;
+  }
+}
+
+@media (width <= 320px) {
+  .list-album {
+    width: 33vw;
+  }
 }

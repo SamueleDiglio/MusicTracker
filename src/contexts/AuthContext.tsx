@@ -8,6 +8,11 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<void>;
+  changeEmail: (newEmail: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -66,12 +71,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
+  async function changePassword(currentPassword: string, newPassword: string) {
+    try {
+      await account.updatePassword(newPassword, currentPassword);
+      checkUser();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function changeEmail(newEmail: string, password: string) {
+    if (!newEmail || !password) {
+      throw new Error("Email and password are required");
+    }
+
+    try {
+      await account.updateEmail(newEmail, password);
+      await checkUser();
+    } catch (error: any) {
+      console.error("Email change error:", error);
+
+      if (error?.code === 409) {
+        throw new Error("This email is already in use");
+      } else if (error?.code === 401) {
+        throw new Error("Current password is incorrect");
+      } else {
+        throw new Error("Failed to update email");
+      }
+    }
+  }
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    changePassword,
+    changeEmail,
   };
 
   return (
