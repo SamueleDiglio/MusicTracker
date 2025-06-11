@@ -50,12 +50,10 @@ const Home = () => {
     }
   }, [user]);
 
-  // Fetch user albums on mount or user change
   useEffect(() => {
     fetchUserAlbums();
   }, [fetchUserAlbums]);
 
-  // Refresh user albums every 30 seconds
   useEffect(() => {
     if (!user) return;
 
@@ -66,7 +64,7 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [user, fetchUserAlbums]);
 
-  // Check if user slider overflows container (using ResizeObserver for robustness)
+  
   useEffect(() => {
     const el = userSliderRef.current;
     if (!el) return;

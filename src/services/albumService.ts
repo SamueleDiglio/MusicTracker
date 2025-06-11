@@ -117,6 +117,19 @@ export const albumService = {
     }
   },
 
+  async removeFromList(documentId: string) {
+    try {
+      return await databases.deleteDocument(
+        MUSIC_DB_ID,
+        USER_ALBUMS_COLLECTION_ID,
+        documentId
+      );
+    } catch (error) {
+      console.error("Impossibile rimuovere l'album dalla lista");
+      throw error;
+    }
+  },
+
   async searchAlbums(query: string) {
     try {
       const API_KEY = import.meta.env.VITE_LASTFM_API_KEY;

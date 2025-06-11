@@ -1,40 +1,58 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { albumService } from '../services/albumService';
+import { useEffect, useState, useCallback } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { albumService } from "../services/albumService";
+import "./Lists.css";
 
 const Lists = () => {
   const { user } = useAuth();
   const [albums, setAlbums] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const loadAlbums = async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const response = await albumService.getUserAlbums(user.$id);
-        setAlbums(response.documents);
-      } catch (error) {
-        console.error('Failed to load albums:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadAlbums();
+  // Funzione di caricamento albums, memorizzata con useCallback per evitare ricreazioni
+  const loadAlbums = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await albumService.getUserAlbums(user.$id);
+      setAlbums(response.documents);
+    } catch (error) {
+      console.error("Failed to load albums:", error);
+      setAlbums([]);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
-  const handleListened = async (albumId: string, current: boolean) => {
+  useEffect(() => {
+    loadAlbums();
+  }, [loadAlbums]);
+
+  const handleListened = useCallback(
+    async (albumId: string, current: boolean) => {
+      try {
+        await albumService.markAsListened(albumId, !current);
+        setAlbums((prevAlbums) =>
+          prevAlbums.map((album) =>
+            album.$id === albumId ? { ...album, listened: !current } : album
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    []
+  );
+
+  const handleRemove = useCallback(async (albumId: string) => {
     try {
-      await albumService.markAsListened(albumId, !current);
-      setAlbums(albums =>
-        albums.map(album =>
-          album.$id === albumId ? { ...album, listened: !current } : album
-        )
+      await albumService.removeFromList(albumId);
+      setAlbums((prevAlbums) =>
+        prevAlbums.filter((album) => album.$id !== albumId)
       );
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
   if (!user) return <p>Please log in to see your listened albums.</p>;
   if (loading) return <p>Loading...</p>;
@@ -43,39 +61,58 @@ const Lists = () => {
   return (
     <div>
       <h1>La tua lista</h1>
-      <ul>
-        {albums.filter(album => !album.listened).map(album => (
-          <li key={album.$id} style={{ marginBottom: '2rem' }}>
-            <img
-              src={album.image || ''}
-              alt={album.albumName}
-            />
-            <div>
-              <strong>{album.albumName}</strong> by {album.artistName}
-              <button onClick={() => handleListened(album.$id, album.listened)}>
-                Marca come ascoltato
-              </button>
+      <div className="list-container">
+        {albums
+          .filter((album) => !album.listened)
+          .map((album) => (
+            <div key={album.$id} className="list-album">
+              <img src={album.image || ""} alt={album.albumName} />
+              <div>
+                <h3>{album.albumName}</h3>
+                <p>{album.artistName}</p>
+                <button
+                  onClick={() => handleListened(album.$id, album.listened)}
+                  className="list-button"
+                >
+                  Marca come ascoltato
+                </button>
+                <button
+                  onClick={() => handleRemove(album.$id)}
+                  className="list-button"
+                >
+                  Rimuovi dalla lista
+                </button>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+      </div>
+
       <h1>Album che hai ascoltato</h1>
-      <ul>
-        {albums.filter(album => album.listened).map(album => (
-          <li key={album.$id} style={{ marginBottom: '2rem' }}>
-            <img
-              src={album.image || ''}
-              alt={album.albumName}
-            />
-            <div>
-              <strong>{album.albumName}</strong> by {album.artistName}
-              <button onClick={() => handleListened(album.$id, album.listened)}>
-                Rimuovi da ascoltati
-              </button>
+      <div className="list-container">
+        {albums
+          .filter((album) => album.listened)
+          .map((album) => (
+            <div key={album.$id} className="list-album">
+              <img src={album.image || ""} alt={album.albumName} />
+              <div>
+                <h3>{album.albumName}</h3>
+                <p>{album.artistName}</p>
+                <button
+                  onClick={() => handleListened(album.$id, album.listened)}
+                  className="list-button"
+                >
+                  Rimuovi da ascoltati
+                </button>
+                <button
+                  onClick={() => handleRemove(album.$id)}
+                  className="list-button"
+                >
+                  Rimuovi dalla lista
+                </button>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+      </div>
     </div>
   );
 };

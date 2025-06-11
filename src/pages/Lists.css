@@ -1,0 +1,43 @@
+.list-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.list-album {
+  background-color: var(--nero1);
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 188px;
+}
+
+.list-album img {
+  width: 188px;
+  border-radius: 4px;
+}
+
+.list-album h3 {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+
+.list-album p {
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.list-button {
+  width: 100%;
+  border-radius: 4px;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--bianco);
+  background-color: red;
+  margin-top: 8px;
+}
