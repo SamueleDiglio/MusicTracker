@@ -1,0 +1,12 @@
+.list-container {
+  padding: 16px;
+  border-radius: 24px;
+  background-color: var(--nero2);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+  margin-top: 16px;
+}

@@ -1,0 +1,40 @@
+.album-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.album-container::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-slider {
+  position: relative;
+  width: 100%;
+}
+
+.slider-arrow-btn {
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 8px;
+  z-index: 2;
+
+  background: rgb(30, 30, 30, 0.6);
+  backdrop-filter: blur(5px);
+  color: var(--verde);
+  font-size: 30px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: solid 1px var(--grigio2);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+}

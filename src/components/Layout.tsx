@@ -23,6 +23,16 @@ const Layout = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [userAlbums, setUserAlbums] = useState<any[]>([]);
+  const [transparent, setTransparent] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setTransparent(window.scrollY < 96); // 96px is nav height
+    };
+    window.addEventListener("scroll", onScroll);
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const fetchUserAlbums = async () => {
     if (!user) {
@@ -153,8 +163,9 @@ const Layout = () => {
 
   return (
     <>
-      <nav>
+      <nav className={transparent ? "" : "translucent"}>
         <ul className="nav-ul">
+          <img src="src\assets\logo.svg" alt="" className="logo" />
           <li>
             <Link to="/" className="subtitle">
               Home
@@ -172,7 +183,7 @@ const Layout = () => {
         <div className="search-container">
           <input
             type="text"
-            placeholder="Cerca album o artista..."
+            placeholder="Cosa vuoi ascoltare?"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -267,7 +278,18 @@ const Layout = () => {
         <ul className="nav-ul">
           <li>
             <Link to="/Profile" className="subtitle">
-              {user ? "Profilo" : "Login"}
+              {user ? (
+                <span className="avatar">
+                  {user.name
+                    .split(" ")
+                    .map((n: string) => n[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
+              ) : (
+                "Login"
+              )}
             </Link>
           </li>
         </ul>

@@ -116,9 +116,22 @@ const AlbumCard = ({
     setIsListened(listened);
   }, [listened]);
 
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className="album-card-background">
-      <img src={image} alt={albumName} className="album-image" />
+      {image && !imgError ? (
+        <img
+          src={image}
+          alt={albumName}
+          className="album-image"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className="no-image">
+          <p>Immagine non trovata</p>
+        </div>
+      )}
       <button className="icon-container">
         {user && added ? (
           <img src="src\assets\inList.svg" alt="nella lista" className="icon" />
@@ -134,7 +147,11 @@ const AlbumCard = ({
       <p className="album-title">{albumName}</p>
       <p className="album-artist">{artistName}</p>
       {user && isListened ? (
-        <button className="listened-button disabled" onClick={handleMarkAsListened} disabled={isListened}>
+        <button
+          className="listened-button disabled"
+          onClick={handleMarkAsListened}
+          disabled={isListened}
+        >
           Ascoltato
         </button>
       ) : (
