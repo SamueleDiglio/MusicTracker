@@ -1,5 +1,6 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", sans-serif;
+
   color-scheme: light dark;
   color: var(--bianco);
   background-color: var(--nero2);
@@ -10,7 +11,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   --bianco: #ffffff;
-  --nero1: #212121;
+  --nero1: #1e1e1e;
   --nero2: #121212;
   --grigio1: #b3b3b3;
   --grigio2: #535353;

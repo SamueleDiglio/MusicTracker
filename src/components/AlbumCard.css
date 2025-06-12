@@ -1,49 +1,71 @@
 .album-card-background {
   background-color: var(--nero1);
   padding: 16px;
-  border-radius: 8px;
-  max-width: 200px;
+  border-radius: 12px;
+  position: relative;
+  height: fit-content;
+  max-width: 207px;
 }
 
-.album-card-background img {
-  width: 200px;
-  border-radius: 4px;
-}
-
-.album-card-background h3 {
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+.album-image {
+  width: 207px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  position: relative;
   display: block;
 }
 
-.album-card-background p {
-  margin-top: 4px;
-  margin-bottom: 0;
+.album-title {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.album-card-buttons {
-  display: flex;
-  gap: 8px;
-  margin: 8px 0px;
+.album-artist {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 300;
 }
 
-.album-card-icon {
-  font-size: 24px;
-}
-
-.checked {
-  color: var(--verde);
-}
-
-.button-icon {
-  all: unset;
+.listened-button {
+  width: 100%;
+  background: var(--verde);
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
   cursor: pointer;
-  transition: 0.4s;
+  color: var(--nero2);
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.button-icon:hover {
-  color: var(--verde);
+.disabled {
+  background: rgb(29, 185, 84, 0.6);
+  cursor: auto;
+}
+
+.icon-container {
+  position: absolute;
+  top: 167px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  padding: 6px;
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}
+
+.icon {
+  width: 27px;
 }

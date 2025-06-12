@@ -8,10 +8,6 @@ import {
   USER_ALBUMS_COLLECTION_ID,
 } from "../lib/appwrite";
 import { Query } from "appwrite";
-import { BsBookmarkPlus } from "react-icons/bs";
-import { BsBookmarkPlusFill } from "react-icons/bs";
-import { BsCheckCircle } from "react-icons/bs";
-import { BsMusicNoteBeamed } from "react-icons/bs";
 
 type AlbumCardProps = {
   mbid: string;
@@ -122,37 +118,30 @@ const AlbumCard = ({
 
   return (
     <div className="album-card-background">
-      <img src={image} alt={albumName} />
-      <div className="album-card-buttons">
-        {user && (
-          <button
+      <img src={image} alt={albumName} className="album-image" />
+      <button className="icon-container">
+        {user && added ? (
+          <img src="src\assets\inList.svg" alt="nella lista" className="icon" />
+        ) : (
+          <img
             onClick={handleMarkAsAdded}
-            disabled={added}
-            className="button-icon"
-          >
-            {added ? (
-              <BsBookmarkPlusFill className="album-card-icon checked" />
-            ) : (
-              <BsBookmarkPlus className="album-card-icon" />
-            )}
-          </button>
+            src="src\assets\addToList.svg"
+            alt="nella lista"
+            className="icon"
+          />
         )}
-        {user && (
-          <button
-            onClick={handleMarkAsListened}
-            disabled={isListened}
-            className="button-icon"
-          >
-            {isListened ? (
-              <BsMusicNoteBeamed className="album-card-icon checked" />
-            ) : (
-              <BsCheckCircle className="album-card-icon" />
-            )}
-          </button>
-        )}
-      </div>
-      <h3>{albumName}</h3>
-      <p>{artistName}</p>
+      </button>
+      <p className="album-title">{albumName}</p>
+      <p className="album-artist">{artistName}</p>
+      {user && isListened ? (
+        <button className="listened-button disabled" onClick={handleMarkAsListened} disabled={isListened}>
+          Ascoltato
+        </button>
+      ) : (
+        <button className="listened-button" onClick={handleMarkAsListened}>
+          Segna come ascoltato
+        </button>
+      )}
     </div>
   );
 };
