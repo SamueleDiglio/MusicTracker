@@ -2,12 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { albumService } from "../services/albumService";
-import {
-  BsBookmarkPlus,
-  BsBookmarkPlusFill,
-  BsCheckCircle,
-  BsMusicNoteBeamed,
-} from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import "./Layout.css";
 
 const normalizeId = (str: string) =>
@@ -27,7 +22,7 @@ const Layout = () => {
 
   useEffect(() => {
     const onScroll = () => {
-      setTransparent(window.scrollY < 96); // 96px is nav height
+      setTransparent(window.scrollY < 96);
     };
     window.addEventListener("scroll", onScroll);
     onScroll();
@@ -50,90 +45,6 @@ const Layout = () => {
   useEffect(() => {
     fetchUserAlbums();
   }, [user]);
-
-  const refreshSearchResults = async () => {
-    if (!searchTerm.trim()) return;
-    try {
-      const results = await albumService.searchAlbums(searchTerm.trim());
-      setSearchResults(Array.isArray(results) ? results : []);
-    } catch {
-      setSearchResults([]);
-      setSearchError("Errore nella ricerca.");
-    }
-  };
-
-  const handleMarkAsAdded = async (
-    album: any,
-    artistName: string,
-    image: string
-  ) => {
-    if (!user) {
-      alert("Devi essere loggato per aggiungere un album.");
-      return;
-    }
-
-    const mbid = normalizeId(album.mbid || `${album.name}-${artistName}`);
-    const existingAlbum = userAlbums.find(
-      (a) => normalizeId(a.albumId) === mbid
-    );
-
-    if (existingAlbum) {
-      alert("Album già presente nella tua lista!");
-      return;
-    }
-
-    try {
-      await albumService.addUserAlbum(user.$id, {
-        albumId: mbid,
-        albumName: album.name,
-        artistName,
-        image,
-        listened: false,
-      });
-      await fetchUserAlbums();
-      await refreshSearchResults();
-    } catch {
-      alert("Errore nell'aggiunta dell'album.");
-    }
-  };
-
-  const handleMarkAsListened = async (
-    album: any,
-    artistName: string,
-    image: string
-  ) => {
-    if (!user) {
-      alert("Devi essere loggato per segnare come ascoltato.");
-      return;
-    }
-
-    const mbid = normalizeId(album.mbid || `${album.name}-${artistName}`);
-    const existingAlbum = userAlbums.find(
-      (a) => normalizeId(a.albumId) === mbid
-    );
-
-    try {
-      if (existingAlbum) {
-        if (existingAlbum.listened) {
-          alert("Album già segnato come ascoltato!");
-          return;
-        }
-        await albumService.markAsListened(existingAlbum.$id, true);
-      } else {
-        await albumService.addUserAlbum(user.$id, {
-          albumId: mbid,
-          albumName: album.name,
-          artistName,
-          image,
-          listened: true,
-        });
-      }
-      await fetchUserAlbums();
-      await refreshSearchResults();
-    } catch {
-      alert("Errore nel segnare come ascoltato.");
-    }
-  };
 
   useEffect(() => {
     if (!searchTerm.trim()) {
@@ -161,11 +72,84 @@ const Layout = () => {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
+  const handleMarkAsAdded = async (
+    album: any,
+    artistName: string,
+    image: string
+  ) => {
+    if (!user) return alert("Devi essere loggato per aggiungere un album.");
+
+    const mbid = normalizeId(album.mbid || `${album.name}-${artistName}`);
+    const existingAlbum = userAlbums.find(
+      (a) => normalizeId(a.albumId) === mbid
+    );
+
+    if (existingAlbum) return alert("Album già presente nella tua lista!");
+
+    try {
+      await albumService.addUserAlbum(user.$id, {
+        albumId: mbid,
+        albumName: album.name,
+        artistName,
+        image,
+        listened: false,
+      });
+      await fetchUserAlbums();
+      await refreshSearchResults();
+    } catch {
+      alert("Errore nell'aggiunta dell'album.");
+    }
+  };
+
+  const handleMarkAsListened = async (
+    album: any,
+    artistName: string,
+    image: string
+  ) => {
+    if (!user) return alert("Devi essere loggato per segnare come ascoltato.");
+
+    const mbid = normalizeId(album.mbid || `${album.name}-${artistName}`);
+    const existingAlbum = userAlbums.find(
+      (a) => normalizeId(a.albumId) === mbid
+    );
+
+    try {
+      if (existingAlbum) {
+        if (existingAlbum.listened)
+          return alert("Album già segnato come ascoltato!");
+        await albumService.markAsListened(existingAlbum.$id, true);
+      } else {
+        await albumService.addUserAlbum(user.$id, {
+          albumId: mbid,
+          albumName: album.name,
+          artistName,
+          image,
+          listened: true,
+        });
+      }
+      await fetchUserAlbums();
+      await refreshSearchResults();
+    } catch {
+      alert("Errore nel segnare come ascoltato.");
+    }
+  };
+
+  const refreshSearchResults = async () => {
+    if (!searchTerm.trim()) return;
+    try {
+      const results = await albumService.searchAlbums(searchTerm.trim());
+      setSearchResults(Array.isArray(results) ? results : []);
+    } catch {
+      setSearchResults([]);
+      setSearchError("Errore nella ricerca.");
+    }
+  };
+
   return (
     <>
       <nav className={transparent ? "" : "translucent"}>
         <ul className="nav-ul">
-          <img src="src\assets\logo.svg" alt="" className="logo" />
+          <img src="src/assets/logo.svg" alt="" className="logo" />
           <li>
             <Link to="/" className="subtitle">
               Home
@@ -181,97 +165,15 @@ const Layout = () => {
         </ul>
 
         <div className="search-container">
-          <input
-            type="text"
-            placeholder="Cosa vuoi ascoltare?"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-          <div className="search-results">
-            {searchLoading && <p>Caricamento risultati...</p>}
-            {searchError && <p style={{ color: "red" }}>{searchError}</p>}
-            {searchResults.length > 0 && (
-              <ul className="search-results-list">
-                {searchResults.map((album, idx) => {
-                  const artistName =
-                    album.artist?.name ||
-                    album.artistName ||
-                    (typeof album.artist === "string"
-                      ? album.artist
-                      : "Sconosciuto");
-
-                  let image = "";
-                  if (Array.isArray(album.image)) {
-                    image =
-                      album.image.find((img: any) => img.size === "large")?.[
-                        "#text"
-                      ] || "";
-                  } else if (typeof album.image === "string") {
-                    image = album.image;
-                  }
-
-                  const mbid = normalizeId(
-                    album.mbid || `${album.name}-${artistName}`
-                  );
-                  const userAlbum = userAlbums.find(
-                    (a) => normalizeId(a.albumId) === mbid
-                  );
-                  const isAdded = !!userAlbum;
-                  const isListened = userAlbum?.listened ?? false;
-
-                  return (
-                    <li key={`search-${idx}`}>
-                      <div className="search-results-content">
-                        <img
-                          src={image}
-                          alt={album.name}
-                          className="search-result-image"
-                        />
-                        <div className="search-result-info">
-                          <h3 className="search-result-title">
-                            {album.name || "Sconosciuto"}
-                          </h3>
-                          <h4 className="search-result-artist">{artistName}</h4>
-                          <div className="search-result-buttons">
-                            {user && (
-                              <button
-                                onClick={() =>
-                                  handleMarkAsAdded(album, artistName, image)
-                                }
-                                disabled={isAdded}
-                                className="button-icon"
-                              >
-                                {isAdded ? (
-                                  <BsBookmarkPlusFill className="result-icon checked" />
-                                ) : (
-                                  <BsBookmarkPlus className="result-icon" />
-                                )}
-                              </button>
-                            )}
-                            {user && (
-                              <button
-                                onClick={() =>
-                                  handleMarkAsListened(album, artistName, image)
-                                }
-                                disabled={isListened}
-                                className="button-icon"
-                              >
-                                {isListened ? (
-                                  <BsMusicNoteBeamed className="result-icon checked" />
-                                ) : (
-                                  <BsCheckCircle className="result-icon" />
-                                )}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div className="search-wrapper">
+            <BsSearch className="search-icon-inside" />
+            <input
+              type="text"
+              placeholder="cosa vuoi ascoltare?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
           </div>
         </div>
 
@@ -294,6 +196,96 @@ const Layout = () => {
           </li>
         </ul>
       </nav>
+
+      {searchTerm.trim() && (
+        <div className="search-results">
+          {searchLoading && <p>Caricamento risultati...</p>}
+          {searchError && <p style={{ color: "red" }}>{searchError}</p>}
+          {searchResults.length > 0 && (
+            <ul className="search-results-list">
+              {searchResults.map((album, idx) => {
+                const artistName =
+                  album.artist?.name ||
+                  album.artistName ||
+                  (typeof album.artist === "string"
+                    ? album.artist
+                    : "Sconosciuto");
+                let image = "";
+                if (Array.isArray(album.image))
+                  image =
+                    album.image.find((img: any) => img.size === "large")?.[
+                      "#text"
+                    ] || "";
+                else if (typeof album.image === "string") image = album.image;
+
+                const mbid = normalizeId(
+                  album.mbid || `${album.name}-${artistName}`
+                );
+                const userAlbum = userAlbums.find(
+                  (a) => normalizeId(a.albumId) === mbid
+                );
+                const isAdded = !!userAlbum;
+                const isListened = userAlbum?.listened ?? false;
+
+                return (
+                  <li key={`search-${idx}`}>
+                    <div className="search-results-content">
+                      <img
+                        src={image}
+                        alt={album.name}
+                        className="search-result-image"
+                      />
+                      <div className="search-result-info">
+                        <h3 className="search-result-title">
+                          {album.name || "Sconosciuto"}
+                        </h3>
+                        <h4 className="search-result-artist">{artistName}</h4>
+                        <div className="search-result-buttons">
+                          {user && (
+                            <button
+                              onClick={() =>
+                                handleMarkAsAdded(album, artistName, image)
+                              }
+                              disabled={isAdded}
+                              className="button-icon"
+                            >
+                              <img
+                                src={`src/assets/${
+                                  isAdded ? "inList.svg" : "addToList.svg"
+                                }`}
+                                alt={isAdded ? "in list" : "add to list"}
+                                className="search-icon"
+                              />
+                            </button>
+                          )}
+                          {user && (
+                            <button
+                              onClick={() =>
+                                handleMarkAsListened(album, artistName, image)
+                              }
+                              disabled={isListened}
+                              className="button-icon"
+                            >
+                              <img
+                                src={`src/assets/${
+                                  isListened ? "listened.svg" : "unlistened.svg"
+                                }`}
+                                alt={isListened ? "listened" : "unlistened"}
+                                className="search-icon"
+                              />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <hr className="divisor" />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
 
       <main>
         <Outlet />
