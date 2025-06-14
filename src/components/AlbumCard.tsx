@@ -16,6 +16,7 @@ type AlbumCardProps = {
   artistName: string;
   listened: boolean;
   onChange?: () => void;
+  className: string;
 };
 
 const AlbumCard = ({
@@ -25,6 +26,7 @@ const AlbumCard = ({
   artistName,
   listened,
   onChange,
+  className,
 }: AlbumCardProps) => {
   const [added, setAdded] = useState(false);
   const [isListened, setIsListened] = useState(listened);
@@ -119,31 +121,37 @@ const AlbumCard = ({
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="album-card-background">
-      {image && !imgError ? (
-        <img
-          src={image}
-          alt={albumName}
-          className="album-image"
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        <div className="no-image">
-          <p>Immagine non trovata</p>
-        </div>
-      )}
-      <button className="icon-container">
-        {user && added ? (
-          <img src="src\assets\inList.svg" alt="nella lista" className="icon" />
-        ) : (
+    <div className={`album-card-background ${className}`}>
+      <div className="image-wrapper">
+        {image && !imgError ? (
           <img
-            onClick={handleMarkAsAdded}
-            src="src\assets\addToList.svg"
-            alt="nella lista"
-            className="icon"
+            src={image}
+            alt={albumName}
+            className="album-image"
+            onError={() => setImgError(true)}
           />
+        ) : (
+          <div className="no-image">
+            <p>Immagine non trovata</p>
+          </div>
         )}
-      </button>
+        <button className="icon-container">
+          {user && added ? (
+            <img
+              src="src\assets\inList.svg"
+              alt="nella lista"
+              className="icon"
+            />
+          ) : (
+            <img
+              onClick={handleMarkAsAdded}
+              src="src\assets\addToList.svg"
+              alt="nella lista"
+              className="icon"
+            />
+          )}
+        </button>
+      </div>
       <p className="album-title">{albumName}</p>
       <p className="album-artist">{artistName}</p>
       {user && isListened ? (

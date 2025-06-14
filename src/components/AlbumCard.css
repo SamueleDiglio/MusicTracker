@@ -4,33 +4,37 @@
   border-radius: 12px;
   position: relative;
   height: fit-content;
-  max-width: 207px;
+  flex: 1 1 160px;
+  box-sizing: border-box;
 }
 
-.album-image {
-  width: 207px;
-  border-radius: 6px;
-  margin-bottom: 8px;
+.image-wrapper {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 8px;
+}
+
+.album-image,
+.no-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  object-fit: cover;
   display: block;
 }
 
 .no-image {
   background: var(--nero2);
-  border-radius: 6px;
-  height: 207px;
-  width: 207px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  margin-bottom: 8px;
 }
 
 .album-title {
   margin-top: 0;
   margin-bottom: 8px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -39,8 +43,8 @@
 
 .album-artist {
   margin-top: 0;
-  margin-bottom: 16px;
-  font-size: 20px;
+  margin-bottom: 8px;
+  font-size: 16px;
   font-weight: 300;
 }
 
@@ -52,7 +56,7 @@
   padding: 8px;
   cursor: pointer;
   color: var(--nero2);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -63,8 +67,8 @@
 
 .icon-container {
   position: absolute;
-  top: 167px;
-  right: 24px;
+  bottom: 8px;
+  right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,5 +83,29 @@
 }
 
 .icon {
-  height: 36px;
+  height: 28px;
+}
+
+@media (max-width: 768px) {
+  .listened-button {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 500px) {
+  .album-card-background {
+    padding: 8px;
+  }
+
+  .album-title {
+    font-size: 16px;
+  }
+
+  .album-artist {
+    font-size: 12px;
+  }
+
+  .listened-button {
+    font-size: 11px;
+  }
 }

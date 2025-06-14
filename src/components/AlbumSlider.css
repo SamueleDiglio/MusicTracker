@@ -7,9 +7,13 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-
 .album-container::-webkit-scrollbar {
   display: none;
+}
+
+.slider-card {
+  flex: 0 0 auto;
+  width: clamp(190px, 20vw, 216px);
 }
 
 .horizontal-slider {
@@ -37,4 +41,10 @@
   border-radius: 50%;
   border: solid 1px var(--grigio2);
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 500px) {
+  .slider-card {
+    width: clamp(150px, 20vw, 216px);
+  }
 }

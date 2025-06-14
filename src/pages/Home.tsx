@@ -78,6 +78,7 @@ const Home = () => {
         albums={userAlbums.filter((album) => !album.listened)}
         renderAlbum={(album) => (
           <AlbumCard
+            className="slider-card"
             key={album.$id}
             mbid={album.albumId}
             image={album.image}
@@ -109,6 +110,7 @@ const Home = () => {
             : album.image;
           return (
             <AlbumCard
+              className="slider-card"
               key={mbid}
               mbid={mbid}
               image={image}
@@ -136,6 +138,7 @@ const Home = () => {
             : album.image;
           return (
             <AlbumCard
+              className="slider-card"
               key={mbid}
               mbid={mbid}
               image={image}

@@ -1,4 +1,4 @@
-nav {
+.full-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,6 +12,10 @@ nav {
   padding: 0 32px;
   z-index: 3;
   box-sizing: border-box;
+}
+
+.mobile-nav {
+  display: none;
 }
 
 .translucent {
@@ -43,7 +47,7 @@ nav {
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  margin: 0 auto;
+  margin-left: 32px;
   cursor: pointer;
 }
 
@@ -183,4 +187,129 @@ nav {
 
 li:last-child .divisor {
   display: none;
+}
+
+@media (max-width: 1300px) {
+  .search-results-list {
+    max-width: 100%;
+  }
+
+  .search-container {
+    position: relative;
+    left: unset;
+    transform: unset;
+    width: 100%;
+    margin-left: 32px;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-results {
+    position: absolute;
+    top: 70px;
+    left: unset;
+    transform: unset;
+    width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .full-nav {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: rgba(19, 19, 19, 0.6);
+    backdrop-filter: blur(15px);
+    height: 96px;
+    padding: 0 32px;
+    z-index: 3;
+    box-sizing: border-box;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  .nav-ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: none;
+    border: 0;
+  }
+
+  .nav-button:hover {
+    color: var(--verde);
+  }
+
+  .nav-icon {
+    height: 36px;
+    margin-bottom: 4px;
+    font-size: 36px;
+    color: var(--verde);
+  }
+
+  .nav-button .subtitle {
+    margin-bottom: 0;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .search-container {
+    margin: unset;
+    position: fixed;
+    bottom: 112px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 32px);
+    z-index: 4;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .search-results {
+    position: fixed;
+    top: unset;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    border-radius: 22px;
+    overflow-y: auto;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 5;
+  }
 }
