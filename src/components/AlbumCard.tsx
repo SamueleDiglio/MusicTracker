@@ -8,6 +8,8 @@ import {
   USER_ALBUMS_COLLECTION_ID,
 } from "../lib/appwrite";
 import { Query } from "appwrite";
+import inListSvg from "../assets/inList.svg";
+import AddToListSvg from "../assets/addToList.svg";
 
 type AlbumCardProps = {
   mbid: string;
@@ -138,14 +140,14 @@ const AlbumCard = ({
         <button className="icon-container">
           {user && added ? (
             <img
-              src="src\assets\inList.svg"
+              src={inListSvg}
               alt="nella lista"
               className="icon"
             />
           ) : (
             <img
               onClick={handleMarkAsAdded}
-              src="src\assets\addToList.svg"
+              src={AddToListSvg}
               alt="nella lista"
               className="icon"
             />

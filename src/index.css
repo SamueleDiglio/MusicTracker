@@ -63,9 +63,7 @@ a:hover {
   .page-container {
     padding: 16px 16px 16px;
   }
-}
 
-@media (max-width: 500px) {
   .title {
     font-size: 18px;
   }

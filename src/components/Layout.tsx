@@ -3,6 +3,14 @@ import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { albumService } from "../services/albumService";
 import { BsSearch } from "react-icons/bs";
+import logoSvg from "../assets/logo.svg";
+import homeSvg from "../assets/home.svg";
+import listsSvg from "../assets/lists.svg";
+import inListSvg from "../assets/inList.svg";
+import AddToListSvg from "../assets/addToList.svg";
+import listenedSvg from "../assets/listened.svg";
+import unlistenedSvg from "../assets/unlistened.svg";
+
 import "./Layout.css";
 
 const normalizeId = (str: string) =>
@@ -160,7 +168,7 @@ const Layout = () => {
     <>
       <nav className={transparent ? "full-nav" : "full-nav translucent"}>
         <ul className="nav-ul">
-          <img src="src/assets/logo.svg" alt="" className="logo" />
+          <img src={logoSvg} alt="" className="logo" />
           <li>
             <Link to="/" className="subtitle">
               Home
@@ -175,7 +183,7 @@ const Layout = () => {
           )}
         </ul>
 
-        {/* Desktop search */}
+        {/* Desktop search input only - results moved outside nav */}
         {!isMobile && (
           <div className="search-container">
             <div className="search-wrapper">
@@ -187,116 +195,6 @@ const Layout = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
               />
-
-              {/* Risultati desktop */}
-              {searchTerm.trim() && (
-                <div className="search-results">
-                  {searchLoading && <p>Caricamento risultati...</p>}
-                  {searchError && <p style={{ color: "red" }}>{searchError}</p>}
-                  {searchResults.length > 0 && (
-                    <ul className="search-results-list">
-                      {searchResults.map((album, idx) => {
-                        const artistName =
-                          album.artist?.name ||
-                          album.artistName ||
-                          (typeof album.artist === "string"
-                            ? album.artist
-                            : "Sconosciuto");
-                        let image = "";
-                        if (Array.isArray(album.image))
-                          image =
-                            album.image.find(
-                              (img: any) => img.size === "large"
-                            )?.["#text"] || "";
-                        else if (typeof album.image === "string")
-                          image = album.image;
-
-                        const mbid = normalizeId(
-                          album.mbid || `${album.name}-${artistName}`
-                        );
-                        const userAlbum = userAlbums.find(
-                          (a) => normalizeId(a.albumId) === mbid
-                        );
-                        const isAdded = !!userAlbum;
-                        const isListened = userAlbum?.listened ?? false;
-
-                        return (
-                          <li key={`search-${idx}`}>
-                            <div className="search-results-content">
-                              <img
-                                src={image}
-                                alt={album.name}
-                                className="search-result-image"
-                              />
-                              <div className="search-result-info">
-                                <h3 className="search-result-title">
-                                  {album.name || "Sconosciuto"}
-                                </h3>
-                                <h4 className="search-result-artist">
-                                  {artistName}
-                                </h4>
-                                <div className="search-result-buttons">
-                                  {user && (
-                                    <button
-                                      onClick={() =>
-                                        handleMarkAsAdded(
-                                          album,
-                                          artistName,
-                                          image
-                                        )
-                                      }
-                                      disabled={isAdded}
-                                      className="button-icon"
-                                    >
-                                      <img
-                                        src={`src/assets/${
-                                          isAdded
-                                            ? "inList.svg"
-                                            : "addToList.svg"
-                                        }`}
-                                        alt={
-                                          isAdded ? "in list" : "add to list"
-                                        }
-                                        className="search-icon"
-                                      />
-                                    </button>
-                                  )}
-                                  {user && (
-                                    <button
-                                      onClick={() =>
-                                        handleMarkAsListened(
-                                          album,
-                                          artistName,
-                                          image
-                                        )
-                                      }
-                                      disabled={isListened}
-                                      className="button-icon"
-                                    >
-                                      <img
-                                        src={`src/assets/${
-                                          isListened
-                                            ? "listened.svg"
-                                            : "unlistened.svg"
-                                        }`}
-                                        alt={
-                                          isListened ? "listened" : "unlistened"
-                                        }
-                                        className="search-icon"
-                                      />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <hr className="divisor" />
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -322,13 +220,100 @@ const Layout = () => {
         </ul>
       </nav>
 
+      {/* Desktop search results - now outside of nav */}
+      {!isMobile && searchTerm.trim() && (
+        <div className="search-results desktop-results">
+          {searchLoading && <p>Caricamento risultati...</p>}
+          {searchError && <p style={{ color: "red" }}>{searchError}</p>}
+          {searchResults.length > 0 && (
+            <ul className="search-results-list">
+              {searchResults.map((album, idx) => {
+                const artistName =
+                  album.artist?.name ||
+                  album.artistName ||
+                  (typeof album.artist === "string"
+                    ? album.artist
+                    : "Sconosciuto");
+                let image = "";
+                if (Array.isArray(album.image))
+                  image =
+                    album.image.find((img: any) => img.size === "large")?.[
+                      "#text"
+                    ] || "";
+                else if (typeof album.image === "string") image = album.image;
+
+                const mbid = normalizeId(
+                  album.mbid || `${album.name}-${artistName}`
+                );
+                const userAlbum = userAlbums.find(
+                  (a) => normalizeId(a.albumId) === mbid
+                );
+                const isAdded = !!userAlbum;
+                const isListened = userAlbum?.listened ?? false;
+
+                return (
+                  <li key={`search-${idx}`}>
+                    <div className="search-results-content">
+                      <img
+                        src={image}
+                        alt={album.name}
+                        className="search-result-image"
+                      />
+                      <div className="search-result-info">
+                        <h3 className="search-result-title">
+                          {album.name || "Sconosciuto"}
+                        </h3>
+                        <h4 className="search-result-artist">{artistName}</h4>
+                        <div className="search-result-buttons">
+                          {user && (
+                            <button
+                              onClick={() =>
+                                handleMarkAsAdded(album, artistName, image)
+                              }
+                              disabled={isAdded}
+                              className="button-icon"
+                            >
+                              <img
+                                src={isAdded ? inListSvg : AddToListSvg}
+                                alt={isAdded ? "in list" : "add to list"}
+                                className="search-icon"
+                              />
+                            </button>
+                          )}
+                          {user && (
+                            <button
+                              onClick={() =>
+                                handleMarkAsListened(album, artistName, image)
+                              }
+                              disabled={isListened}
+                              className="button-icon"
+                            >
+                              <img
+                                src={isListened ? listenedSvg : unlistenedSvg}
+                                alt={isListened ? "listened" : "unlistened"}
+                                className="search-icon"
+                              />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <hr className="divisor" />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
+
       {/* Mobile nav */}
       <nav className="mobile-nav">
         <ul className="nav-ul">
           <li>
             <Link to="/">
               <div className="nav-button">
-                <img src="src/assets/home.svg" alt="" className="nav-icon" />
+                <img src={homeSvg} alt="" className="nav-icon" />
                 <h1 className="subtitle">Home</h1>
               </div>
             </Link>
@@ -337,7 +322,7 @@ const Layout = () => {
             <li>
               <Link to="/Lists">
                 <div className="nav-button">
-                  <img src="src/assets/lists.svg" alt="" className="nav-icon" />
+                  <img src={listsSvg} alt="" className="nav-icon" />
                   <h1 className="subtitle">Liste</h1>
                 </div>
               </Link>
@@ -380,14 +365,17 @@ const Layout = () => {
       {/* Mobile search input */}
       {mobileSearchVisible && (
         <div className="search-container mobile-search-container">
-          <input
-            type="text"
-            placeholder="Cosa vuoi ascoltare?"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input mobile"
-            autoFocus
-          />
+          <div className="search-wrapper">
+            <BsSearch className="search-icon-inside" />
+            <input
+              type="text"
+              placeholder="Cosa vuoi ascoltare?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input mobile"
+              autoFocus
+            />
+          </div>
 
           {/* Mobile search results */}
           {searchTerm.trim() && (
@@ -446,9 +434,7 @@ const Layout = () => {
                                   className="button-icon"
                                 >
                                   <img
-                                    src={`src/assets/${
-                                      isAdded ? "inList.svg" : "addToList.svg"
-                                    }`}
+                                    src={isAdded ? inListSvg : AddToListSvg}
                                     alt={isAdded ? "in list" : "add to list"}
                                     className="search-icon"
                                   />
@@ -467,11 +453,9 @@ const Layout = () => {
                                   className="button-icon"
                                 >
                                   <img
-                                    src={`src/assets/${
-                                      isListened
-                                        ? "listened.svg"
-                                        : "unlistened.svg"
-                                    }`}
+                                    src={
+                                      isListened ? listenedSvg : unlistenedSvg
+                                    }
                                     alt={isListened ? "listened" : "unlistened"}
                                     className="search-icon"
                                   />

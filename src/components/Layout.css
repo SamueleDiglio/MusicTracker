@@ -10,7 +10,7 @@
   background: rgba(19, 19, 19);
   height: 96px;
   padding: 0 32px;
-  z-index: 3;
+  z-index: 6;
   box-sizing: border-box;
 }
 
@@ -47,7 +47,6 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  margin-left: 32px;
   cursor: pointer;
 }
 
@@ -101,7 +100,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 500px;
-  z-index: 5;
+  z-index: 7; /* Above the nav */
   max-height: 500px;
   border-radius: 22px;
   margin: 0;
@@ -143,11 +142,10 @@
 }
 
 .search-result-info {
-  flex: 1;
+  min-width: 0;
 }
 
 .search-result-title {
-  max-width: 334px;
   margin-top: 0;
   margin-bottom: 8px;
   font-size: 20px;
@@ -190,10 +188,6 @@ li:last-child .divisor {
 }
 
 @media (max-width: 1300px) {
-  .search-results-list {
-    max-width: 100%;
-  }
-
   .search-container {
     position: relative;
     left: unset;
@@ -204,23 +198,43 @@ li:last-child .divisor {
 
   .search-wrapper {
     width: 100%;
+    margin-right: 32px;
   }
 
   .search-input {
     width: 100%;
+    box-sizing: border-box;
   }
 
   .search-results {
-    position: absolute;
-    top: 70px;
-    left: unset;
+    position: fixed;
+    top: 72px;
+    left: 263.33px;
+    right: 107px;
     transform: unset;
-    width: 90%;
+    width: auto;
+  }
+
+  .search-result-title {
+    width: 100%;
+    max-width: calc(100%);
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
   }
 }
 
 @media (max-width: 768px) {
   .full-nav {
+    display: none;
+  }
+
+  .desktop-results {
     display: none;
   }
 
@@ -234,7 +248,7 @@ li:last-child .divisor {
     width: 100%;
     background: rgba(19, 19, 19, 0.6);
     backdrop-filter: blur(15px);
-    height: 96px;
+    height: fit-content;
     padding: 0 32px;
     z-index: 3;
     box-sizing: border-box;
@@ -284,8 +298,9 @@ li:last-child .divisor {
   .search-container {
     margin: unset;
     position: fixed;
-    bottom: 112px;
+    top: 16px;
     left: 50%;
+
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -295,21 +310,18 @@ li:last-child .divisor {
   }
 
   .search-wrapper {
-    width: 100%;
+    margin-right: 0;
   }
 
   .search-results {
-    position: fixed;
-    top: unset;
-    bottom: 44px;
+    top: 44px;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    border-radius: 22px;
-    overflow-y: auto;
-    background: rgba(30, 30, 30, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    z-index: 5;
+    max-height: calc(100vh - 221px);
+  }
+
+  .search-results-list {
+    max-width: 100%;
   }
 }

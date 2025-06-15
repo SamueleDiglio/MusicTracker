@@ -53,7 +53,7 @@ const Home = () => {
     if (!user) return;
     const interval = setInterval(() => {
       fetchUserAlbums();
-    }, 60000);
+    }, 10000000000000000000000000000000000000000000060000);
     return () => clearInterval(interval);
   }, [user, fetchUserAlbums]);
 
