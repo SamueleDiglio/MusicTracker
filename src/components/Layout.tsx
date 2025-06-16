@@ -183,7 +183,6 @@ const Layout = () => {
           )}
         </ul>
 
-        {/* Desktop search input only - results moved outside nav */}
         {!isMobile && (
           <div className="search-container">
             <div className="search-wrapper">
@@ -199,7 +198,6 @@ const Layout = () => {
           </div>
         )}
 
-        {/* Right nav */}
         <ul className="nav-ul">
           <li>
             <Link to="/Profile" className="subtitle">
@@ -220,7 +218,6 @@ const Layout = () => {
         </ul>
       </nav>
 
-      {/* Desktop search results - now outside of nav */}
       {!isMobile && searchTerm.trim() && (
         <div className="search-results desktop-results">
           {searchLoading && <p>Caricamento risultati...</p>}
@@ -307,7 +304,6 @@ const Layout = () => {
         </div>
       )}
 
-      {/* Mobile nav */}
       <nav className="mobile-nav">
         <ul className="nav-ul">
           <li>
@@ -353,7 +349,9 @@ const Layout = () => {
                       .toUpperCase()}
                   </span>
                 ) : (
-                  "Login"
+                  <span className="avatar">
+                    <img src={logoSvg} alt="" className="avatar-logo"/>
+                  </span>
                 )}
                 <h1 className="subtitle">Profilo</h1>
               </div>
@@ -362,7 +360,6 @@ const Layout = () => {
         </ul>
       </nav>
 
-      {/* Mobile search input */}
       {mobileSearchVisible && (
         <div className="search-container mobile-search-container">
           <div className="search-wrapper">
@@ -377,7 +374,6 @@ const Layout = () => {
             />
           </div>
 
-          {/* Mobile search results */}
           {searchTerm.trim() && (
             <div className="search-results mobile-results">
               {searchLoading && <p>Caricamento risultati...</p>}

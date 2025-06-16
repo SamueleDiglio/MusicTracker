@@ -43,17 +43,15 @@ const Home = () => {
     }
   }, [user]);
 
-  // Fetch user albums on mount and when user changes
   useEffect(() => {
     fetchUserAlbums();
   }, [fetchUserAlbums]);
 
-  // Optionally, refresh user albums every 60s
   useEffect(() => {
     if (!user) return;
     const interval = setInterval(() => {
       fetchUserAlbums();
-    }, 10000000000000000000000000000000000000000000060000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [user, fetchUserAlbums]);
 
@@ -71,7 +69,7 @@ const Home = () => {
   return (
     <div className="page-container">
       <h1 className="title">
-        Ciao {user ? user.name.split(" ")[0] : ""}! Cosa ascolterai oggi?
+        Ciao{user ? " " + user.name.split(" ")[0] : ""}! Cosa ascolterai oggi?
       </h1>
 
       <AlbumSlider
@@ -94,7 +92,9 @@ const Home = () => {
             <p>
               Non è presente alcun album nella tua lista. Aggiungine qualcuno.
             </p>
-          ) : null
+          ) : (
+            <p>Accedi per visualizzare la tua lista</p>
+          )
         }
       />
 

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { BsChevronRight } from "react-icons/bs";
+import { BiLogOut } from "react-icons/bi";
 import "./Profile.css";
 
 const Profile = () => {
@@ -15,45 +17,46 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
+  const [passwordChangeVisible, setPasswordChangeVisible] = useState("none");
+  const [emailChangeVisible, setEmailChangeVisible] = useState("none");
+  const [rotateE, setRotateE] = useState("");
+  const [rotateP, setRotateP] = useState("");
 
   const navigate = useNavigate();
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word[0])
-      .join("")
-      .toUpperCase();
-  };
-
-  const getAvatarColor = (name: string) => {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const hue = Math.abs(hash % 360);
-    return `hsl(${hue}, 70%, 50%)`;
-  };
-
-  const Avatar = ({ name }: { name: string }) => (
-    <div
-      style={{
-        width: "60px",
-        height: "60px",
-        borderRadius: "50%",
-        backgroundColor: getAvatarColor(name),
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "white",
-        fontSize: "24px",
-        fontWeight: "bold",
-        marginBottom: "1rem",
-      }}
-    >
-      {getInitials(name)}
+  const Avatar = () => (
+    <div className="profile-avatar">
+      {user?.name
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
+        .toUpperCase()}
     </div>
   );
+
+  const handlePasswordChangeVisible = () => {
+    if (passwordChangeVisible == "none") {
+      setPasswordChangeVisible("flex");
+      setRotateP("rotate(90deg)");
+      setEmailChangeVisible("none");
+      setRotateE("none");
+    } else {
+      setPasswordChangeVisible("none");
+      setRotateP("none");
+    }
+  };
+
+  const handleEmailChangeVisible = () => {
+    if (emailChangeVisible == "none") {
+      setEmailChangeVisible("flex");
+      setRotateE("rotate(90deg)");
+      setPasswordChangeVisible("none");
+      setRotateP("none");
+    } else {
+      setEmailChangeVisible("none");
+      setRotateE("none");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,52 +165,92 @@ const Profile = () => {
   if (user) {
     return (
       <>
-        <div className="profile-info-container">
-          <Avatar name={user.name} />
-          <h1 className="subtitle">{user.name}</h1>
-          <p>{user.email}</p>
-          <button className="profile-button" onClick={logout}>
-            Logout
-          </button>
-        </div>
-        <hr />
-        <div className="profile-action">
-          <div className="change-password">
-            <h1 className="subtitle"> Cambia password</h1>
-            <input
-              type="text"
-              placeholder="Inserisci password attuale"
-              value={currentPasswordForPassword}
-              onChange={(e) => setCurrentPasswordForPassword(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Inserisci nuova password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button className="buttons" onClick={handleChangePassword}>
-              Cambia password
-            </button>
-          </div>
-          <hr />
-          <div className="change-password">
-            <h1 className="subtitle"> Cambia email</h1>
-            <input
-              type="text"
-              placeholder="Inserisci nuova email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Inserisci password attuale"
-              value={currentPasswordForEmail}
-              onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
-            />
-            <button className="buttons" onClick={handleChangeEmail}>
-              Cambia email
-            </button>
+        <div className="page-container profile-page">
+          <div className="profile-container">
+            <div className="profile-info-container">
+              <Avatar />
+              <h1 className="subtitle">{user.name}</h1>
+              <p>{user.email}</p>
+            </div>
+            <div className="profile-actions-container">
+              <hr />
+              <div className="opener" onClick={handleEmailChangeVisible}>
+                <h1 className="subtitle">Cambia email</h1>
+                <BsChevronRight
+                  className="arrow"
+                  style={{ transform: `${rotateE}` }}
+                />
+              </div>
+              {emailChangeVisible && (
+                <div
+                  className="change-block"
+                  style={{ display: `${emailChangeVisible}` }}
+                >
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Inserisci nuova email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Inserisci password attuale"
+                    value={currentPasswordForEmail}
+                    onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
+                  />
+                  <button
+                    className="listened-button"
+                    onClick={handleChangeEmail}
+                  >
+                    Cambia email
+                  </button>
+                </div>
+              )}
+              <hr />
+              <div className="opener" onClick={handlePasswordChangeVisible}>
+                <h1 className="subtitle">Cambia password</h1>
+                <BsChevronRight
+                  className="arrow"
+                  style={{ transform: `${rotateP}` }}
+                />
+              </div>
+              {passwordChangeVisible && (
+                <div
+                  className="change-block"
+                  style={{ display: `${passwordChangeVisible}` }}
+                >
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Inserisci password attuale"
+                    value={currentPasswordForPassword}
+                    onChange={(e) =>
+                      setCurrentPasswordForPassword(e.target.value)
+                    }
+                  />
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Inserisci nuova password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <button
+                    className="listened-button"
+                    onClick={handleChangePassword}
+                  >
+                    Cambia password
+                  </button>
+                </div>
+              )}
+              <hr />
+              <div className="opener destructive" onClick={logout}>
+                <h1 className="subtitle">Logout</h1>
+                <BiLogOut className="logout-icon" />
+              </div>
+            </div>
           </div>
         </div>
       </>
@@ -215,66 +258,53 @@ const Profile = () => {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "2rem" }}>
-      <h1>{isRegistering ? "Register" : "Login"}</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-      >
-        {isRegistering && (
-          <div>
-            <label>
-              Name:
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required={isRegistering}
-                style={{ display: "block", width: "100%", marginTop: "0.5rem" }}
-              />
-            </label>
-          </div>
-        )}
-        <div>
-          <label>
-            Email:
+    <div className="page-container profile-page">
+      <div className="profile-container padded">
+        <h1>{isRegistering ? "Registrati" : "Login"}</h1>
+        <form onSubmit={handleSubmit}>
+          {isRegistering && (
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ display: "block", width: "100%", marginTop: "0.5rem" }}
+              placeholder="Username"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required={isRegistering}
+              className="input"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{ display: "block", width: "100%", marginTop: "0.5rem" }}
-            />
-          </label>
-        </div>
-        <button type="submit" style={{ marginTop: "1rem" }}>
-          {isRegistering ? "Register" : "Login"}
+          )}
+
+          <input
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="input"
+          />
+
+          <input
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="input"
+          />
+
+          <button type="submit" className="auth-button">
+            {isRegistering ? "Registrati" : "Login"}
+          </button>
+        </form>
+        <h1 className="or">oppure</h1>
+        <button
+          onClick={() => setIsRegistering(!isRegistering)}
+          className="auth-button"
+        >
+          {isRegistering
+            ? "Hai già un account? Login"
+            : "Non hai un account? Registrati"}
         </button>
-      </form>
-      <button
-        onClick={() => setIsRegistering(!isRegistering)}
-        style={{ marginTop: "1rem", width: "100%" }}
-      >
-        {isRegistering
-          ? "Already have an account? Login"
-          : "Need an account? Register"}
-      </button>
+      </div>
     </div>
   );
 };
