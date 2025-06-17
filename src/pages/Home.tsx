@@ -1,19 +1,10 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback } from "react";
 import { useLastApi } from "../hooks/useLastApi";
 import AlbumCard from "../components/AlbumCard";
 import { useAuth } from "../contexts/AuthContext";
-import { albumService } from "../services/albumService";
+import { useUserAlbums } from "../contexts/UserAlbumContext";
 import AlbumSlider from "../components/AlbumSlider";
 import "./Home.css";
-
-interface UserAlbum {
-  $id: string;
-  albumId: string;
-  albumName: string;
-  artistName: string;
-  image: string;
-  listened: boolean;
-}
 
 const Home = () => {
   const {
@@ -28,43 +19,14 @@ const Home = () => {
   } = useLastApi("rap", 30);
 
   const { user } = useAuth();
-  const [userAlbums, setUserAlbums] = useState<UserAlbum[]>([]);
-
-  const fetchUserAlbums = useCallback(async () => {
-    if (!user) {
-      setUserAlbums([]);
-      return;
-    }
-    try {
-      const response = await albumService.getUserAlbums(user.$id);
-      setUserAlbums(response.documents);
-    } catch {
-      setUserAlbums([]);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchUserAlbums();
-  }, [fetchUserAlbums]);
-
-  useEffect(() => {
-    if (!user) return;
-    const interval = setInterval(() => {
-      fetchUserAlbums();
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [user, fetchUserAlbums]);
+  const { userAlbums, getAlbumStatus } = useUserAlbums();
 
   const getListenedStatus = useCallback(
     (albumId: string) => {
-      return userAlbums.some((a) => a.albumId === albumId && a.listened);
+      return getAlbumStatus(albumId).listened;
     },
-    [userAlbums]
+    [getAlbumStatus]
   );
-
-  const handleAlbumChange = useCallback(() => {
-    fetchUserAlbums();
-  }, [fetchUserAlbums]);
 
   return (
     <div className="page-container">
@@ -83,7 +45,6 @@ const Home = () => {
             albumName={album.albumName}
             artistName={album.artistName}
             listened={album.listened}
-            onChange={handleAlbumChange}
           />
         )}
         title="La tua lista"
@@ -117,7 +78,6 @@ const Home = () => {
               albumName={album.name}
               artistName={album.artist.name}
               listened={getListenedStatus(mbid)}
-              onChange={handleAlbumChange}
             />
           );
         }}
@@ -145,7 +105,6 @@ const Home = () => {
               albumName={album.name}
               artistName={album.artist.name}
               listened={getListenedStatus(mbid)}
-              onChange={handleAlbumChange}
             />
           );
         }}
