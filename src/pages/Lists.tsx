@@ -1,38 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { albumService } from "../services/albumService";
+import { useUserAlbums } from "../contexts/UserAlbumContext";
 import "./Lists.css";
 import AlbumCard from "../components/AlbumCard";
 
 const Lists = () => {
   const { user } = useAuth();
-  const [albums, setAlbums] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const loadAlbums = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const response = await albumService.getUserAlbums(user.$id);
-      setAlbums(response.documents);
-    } catch (error) {
-      console.error("Failed to load albums:", error);
-      setAlbums([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    loadAlbums();
-  }, [loadAlbums]);
-
-  const handleAlbumChange = useCallback(() => {
-    loadAlbums();
-  }, [loadAlbums]);
+  const { userAlbums, loading, error } = useUserAlbums();
 
   if (!user) return <p>Accedi per visualizzare le tue liste</p>;
   if (loading) return <p>Caricamento...</p>;
+  if (error) return <p>Errore nel caricamento: {error}</p>;
 
   return (
     <div className="page-container">
@@ -40,7 +17,7 @@ const Lists = () => {
       <div className="list-section">
         <h1 className="subtitle">Album da ascoltare</h1>
         <div className="list-grid">
-          {albums
+          {userAlbums
             .filter((album) => !album.listened)
             .map((album) => (
               <AlbumCard
@@ -51,7 +28,6 @@ const Lists = () => {
                 albumName={album.albumName}
                 artistName={album.artistName}
                 listened={album.listened}
-                onChange={handleAlbumChange}
               />
             ))}
         </div>
@@ -60,7 +36,7 @@ const Lists = () => {
       <div className="list-section">
         <h1 className="subtitle">Album ascoltati</h1>
         <div className="list-grid">
-          {albums
+          {userAlbums
             .filter((album) => album.listened)
             .map((album) => (
               <AlbumCard
@@ -71,7 +47,6 @@ const Lists = () => {
                 albumName={album.albumName}
                 artistName={album.artistName}
                 listened={album.listened}
-                onChange={handleAlbumChange}
               />
             ))}
         </div>

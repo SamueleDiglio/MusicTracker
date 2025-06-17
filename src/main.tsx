@@ -8,6 +8,7 @@ import AlbumDetails from "./pages/AlbumDetails";
 import Layout from "./components/Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { UserAlbumProvider } from "./contexts/UserAlbumContext";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,9 @@ if (!root) throw new Error("Root element not found");
 createRoot(root).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <UserAlbumProvider>
+        <RouterProvider router={router} />
+      </UserAlbumProvider>
     </AuthProvider>
   </StrictMode>
 );

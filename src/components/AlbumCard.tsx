@@ -1,16 +1,10 @@
 import "./AlbumCard.css";
 import { useAuth } from "../contexts/AuthContext";
-import { useState, useEffect } from "react";
-import { albumService } from "../services/albumService";
-import {
-  databases,
-  MUSIC_DB_ID,
-  USER_ALBUMS_COLLECTION_ID,
-} from "../lib/appwrite";
-import { Query } from "appwrite";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useUserAlbums } from "../contexts/UserAlbumContext";
 import inListSvg from "../assets/inList.svg";
 import AddToListSvg from "../assets/addToList.svg";
-import { Link } from "react-router-dom";
 
 type AlbumCardProps = {
   mbid: string;
@@ -27,35 +21,12 @@ const AlbumCard = ({
   image,
   albumName,
   artistName,
-  listened,
-  onChange,
   className,
 }: AlbumCardProps) => {
-  const [added, setAdded] = useState(false);
-  const [isListened, setIsListened] = useState(listened);
-  const [docId, setDocId] = useState<string | null>(null);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const checkIfAdded = async () => {
-      if (!user) return;
-      const existing = await databases.listDocuments(
-        MUSIC_DB_ID,
-        USER_ALBUMS_COLLECTION_ID,
-        [Query.equal("userId", user.$id), Query.equal("albumId", mbid)]
-      );
-      if (existing.total > 0) {
-        setAdded(true);
-        setDocId(existing.documents[0].$id);
-        setIsListened(existing.documents[0].listened);
-      } else {
-        setAdded(false);
-        setDocId(null);
-        setIsListened(false);
-      }
-    };
-    checkIfAdded();
-  }, [user, mbid]);
+  const { addAlbum, updateAlbumStatus, getAlbumStatus } = useUserAlbums();
+  const { added, listened, docId } = getAlbumStatus(mbid);
+  const isListened = listened;
 
   const handleMarkAsAdded = async () => {
     if (!user) {
@@ -67,16 +38,13 @@ const AlbumCard = ({
       return;
     }
     try {
-      await albumService.addUserAlbum(user.$id, {
+      await addAlbum({
         albumId: mbid,
         albumName,
         artistName,
         image,
         listened: false,
       });
-      setAdded(true);
-      setIsListened(false);
-      if (onChange) onChange();
     } catch (error) {
       alert("Failed to add album.");
       console.error(error);
@@ -89,25 +57,16 @@ const AlbumCard = ({
       return;
     }
     try {
-      let currentDocId = docId;
       if (!added) {
-        const doc = await albumService.addUserAlbum(user.$id, {
+        await addAlbum({
           albumId: mbid,
           albumName,
           artistName,
           image,
-          listened: false,
+          listened: true,
         });
-        setAdded(true);
-        currentDocId = doc.$id;
-        setDocId(doc.$id);
-        setIsListened(false);
-        if (onChange) onChange();
-      }
-      if (!isListened && currentDocId) {
-        await albumService.markAsListened(currentDocId, true);
-        setIsListened(true);
-        if (onChange) onChange();
+      } else if (docId && !isListened) {
+        await updateAlbumStatus(docId, true);
       } else if (isListened) {
         alert("Album already listened");
       }
@@ -116,10 +75,6 @@ const AlbumCard = ({
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    setIsListened(listened);
-  }, [listened]);
 
   const [imgError, setImgError] = useState(false);
   const encodedAlbum = encodeURIComponent(albumName);
