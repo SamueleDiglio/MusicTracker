@@ -10,6 +10,7 @@ import {
 import { Query } from "appwrite";
 import inListSvg from "../assets/inList.svg";
 import AddToListSvg from "../assets/addToList.svg";
+import { Link } from "react-router-dom";
 
 type AlbumCardProps = {
   mbid: string;
@@ -121,29 +122,32 @@ const AlbumCard = ({
   }, [listened]);
 
   const [imgError, setImgError] = useState(false);
+  const encodedAlbum = encodeURIComponent(albumName);
+  const encodedArtist = encodeURIComponent(artistName);
 
   return (
     <div className={`album-card-background ${className}`}>
       <div className="image-wrapper">
-        {image && !imgError ? (
-          <img
-            src={image}
-            alt={albumName}
-            className="album-image"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className="no-image">
-            <p>Immagine non trovata</p>
-          </div>
-        )}
+        <Link
+          to={`/AlbumDetails/${encodedArtist}/${encodedAlbum}`}
+          title={`${albumName} di ${artistName}`}
+        >
+          {image && !imgError ? (
+            <img
+              src={image}
+              alt={albumName}
+              className="album-image"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="no-image">
+              <p>Immagine non trovata</p>
+            </div>
+          )}
+        </Link>
         <button className="icon-container">
           {user && added ? (
-            <img
-              src={inListSvg}
-              alt="nella lista"
-              className="icon"
-            />
+            <img src={inListSvg} alt="nella lista" className="icon" />
           ) : (
             <img
               onClick={handleMarkAsAdded}
