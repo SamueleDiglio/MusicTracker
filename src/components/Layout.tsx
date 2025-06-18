@@ -367,7 +367,10 @@ const Layout = () => {
             />
             <span
               className="close-icon-inside"
-              onClick={() => setSearchTerm("")}
+              onClick={() => {
+                setSearchTerm("");
+                setMobileSearchVisible(false);
+              }}
             >
               &#10006;
             </span>

@@ -23,6 +23,7 @@ interface UserAlbumContextType {
   refreshAlbums: () => Promise<void>;
   isAlbumAdded: (albumId: string) => boolean;
   getAlbumStatus: (albumId: string) => {
+    id: any;
     added: boolean;
     listened: boolean;
     docId?: string;

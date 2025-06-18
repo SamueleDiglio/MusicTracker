@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useLastApiAlbum } from "../hooks/useLastApi";
+import "./AlbumDetails.css";
 
 const AlbumDetails = () => {
   const { artist, album } = useParams<{ artist: string; album: string }>();
@@ -19,7 +20,7 @@ const AlbumDetails = () => {
   console.log("Album details:", details);
 
   const imageUrl =
-    details.image?.find((img) => img.size === "large")?.["#text"] ||
+    details.image?.find((img) => img.size === "mega")?.["#text"] ||
     details.image?.[0]?.["#text"];
 
   const tracks = details.tracks?.track || details.tracks || [];
@@ -27,31 +28,32 @@ const AlbumDetails = () => {
 
   function getMinutes(duration: number) {
     const minutes = Math.floor(duration / 60);
-    const seconds = duration - minutes * 60;
-    return `${minutes}:${seconds}`;
+    let seconds = duration - minutes * 60;
+    return `${minutes < 10 ? "0" : ""}${minutes}:${
+      seconds < 10 ? "0" : ""
+    }${seconds}`;
   }
 
   return (
     <div className="page-container">
-      <div>
-        <h1>{details.name}</h1>
-        <h2>by {details.artist}</h2>
+      <div className="album-details-content">
+        <div className="album-info-container">
+          {imageUrl ? (
+            <img src={imageUrl} alt={details.name} className="cover" />
+          ) : (
+            <div>
+              <p>Immagine non disponibile</p>
+            </div>
+          )}
+          <h1 className="title">{details.name}</h1>
+          <h1 className="subtitle">{details.artist}</h1>
+        </div>
 
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={details.name}
-            style={{ maxWidth: "300px", height: "auto", marginBottom: "20px" }}
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        )}
-
-        {details.wiki?.summary && (
-          <div style={{ marginBottom: "20px" }}>
-            <h3>Descrizione:</h3>
+        <div className="album-info">
+          <h1 className="subtitle">Descrizione:</h1>
+          {details.wiki?.summary ? (
             <div
+              className="desc"
               dangerouslySetInnerHTML={{
                 __html: details.wiki.summary.replace(
                   /(<a[^>]*>read more)/gi,
@@ -59,36 +61,34 @@ const AlbumDetails = () => {
                 ),
               }}
             />
-          </div>
-        )}
+          ) : (
+            <p className="desc">Non è presente alcuna descrizione.</p>
+          )}
 
-        <h3>Tracce:</h3>
-        {hasValidTracks ? (
-          <ol>
-            {tracks.map((track: any, index: number) => (
-              <li key={index} style={{ marginBottom: "5px" }}>
-                {typeof track === "string"
-                  ? track
-                  : track.name || `Track ${index + 1}`}
-                {track.duration && (
-                  <span style={{ color: "#666", marginLeft: "10px" }}>
-                    ({getMinutes(track.duration)})
-                  </span>
-                )}
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p>Informazioni sulle tracce non disponibili per questo album.</p>
-        )}
+          <h1 className="subtitle">Tracce:</h1>
+          {hasValidTracks ? (
+            <ol>
+              {tracks.map((track: any, index: number) => (
+                <li key={index} className="tracks">
+                  {typeof track === "string"
+                    ? track
+                    : track.name || `Track ${index + 1}`}
+                  {track.duration && <span>{getMinutes(track.duration)}</span>}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p>Informazioni sulle tracce non disponibili per questo album.</p>
+          )}
 
-        {details.url && (
-          <div style={{ marginTop: "20px" }}>
-            <a href={details.url} target="_blank">
-              Visualizza su Last.fm →
-            </a>
-          </div>
-        )}
+          {details.url && (
+            <div>
+              <a href={details.url} target="_blank" className="lastfm">
+                Visualizza su Last.fm →
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
