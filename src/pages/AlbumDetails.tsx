@@ -79,9 +79,7 @@ const AlbumDetails = () => {
             ))}
           </ol>
         ) : (
-          <p>
-            Informazioni sulle tracce non disponibili per questo album.
-          </p>
+          <p>Informazioni sulle tracce non disponibili per questo album.</p>
         )}
 
         {details.url && (

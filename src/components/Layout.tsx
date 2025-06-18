@@ -163,11 +163,26 @@ const Layout = () => {
 
     const mbid = normalizeId(album.mbid || `${album.name}-${artistName}`);
     const albumStatus = getAlbumStatus(mbid);
+    const encodedAlbum = encodeURIComponent(album.name);
+    const encodedArtist = encodeURIComponent(artistName);
 
     return (
       <li key={`${keyPrefix}-${idx}`}>
         <div className="search-results-content">
-          <img src={image} alt={album.name} className="search-result-image" />
+          <Link
+            to={`/AlbumDetails/${encodedArtist}/${encodedAlbum}`}
+            title={`${album.name} di ${artistName}`}
+            onClick={
+              isMobile
+                ? () => {
+                    setSearchTerm("");
+                    setMobileSearchVisible(false);
+                  }
+                : () => setSearchTerm("")
+            }
+          >
+            <img src={image} alt={album.name} className="search-result-image" />
+          </Link>
           <div className="search-result-info">
             <h3 className="search-result-title">
               {album.name || "Sconosciuto"}
@@ -238,6 +253,12 @@ const Layout = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
               />
+              <span
+                className="close-icon-inside"
+                onClick={() => setSearchTerm("")}
+              >
+                &#10006;
+              </span>
             </div>
           </div>
         )}
@@ -344,6 +365,12 @@ const Layout = () => {
               className="search-input mobile"
               autoFocus
             />
+            <span
+              className="close-icon-inside"
+              onClick={() => setSearchTerm("")}
+            >
+              &#10006;
+            </span>
           </div>
 
           {searchTerm.trim() && (
