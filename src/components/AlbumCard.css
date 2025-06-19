@@ -65,6 +65,10 @@
   cursor: auto;
 }
 
+.disabled:hover {
+  background: rgb(255, 0, 0, 0.6);
+}
+
 .icon-container {
   position: absolute;
   bottom: 8px;

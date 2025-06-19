@@ -24,7 +24,8 @@ const AlbumCard = ({
   className,
 }: AlbumCardProps) => {
   const { user } = useAuth();
-  const { addAlbum, updateAlbumStatus, getAlbumStatus } = useUserAlbums();
+  const { addAlbum, updateAlbumStatus, getAlbumStatus, removeAlbum } =
+    useUserAlbums();
   const { added, listened, docId } = getAlbumStatus(mbid);
   const isListened = listened;
 
@@ -76,6 +77,36 @@ const AlbumCard = ({
     }
   };
 
+  const handleRemoveFromList = async () => {
+    if (!user) {
+      alert("Devi essere loggato per rimuovere un album dalla lista.");
+      return;
+    }
+    if (!docId) return;
+
+    try {
+      await removeAlbum(docId);
+    } catch (error) {
+      alert("Errore nella rimozione dell'album.");
+      console.error(error);
+    }
+  };
+
+  const handleMarkAsUnlistened = async () => {
+    if (!user) {
+      alert("Devi essere loggato per modificare lo stato.");
+      return;
+    }
+    if (!docId) return;
+
+    try {
+      await updateAlbumStatus(docId, false);
+    } catch (error) {
+      alert("Errore nel segnare come non ascoltato.");
+      console.error(error);
+    }
+  };
+
   const [imgError, setImgError] = useState(false);
   const encodedAlbum = encodeURIComponent(albumName);
   const encodedArtist = encodeURIComponent(artistName);
@@ -102,7 +133,12 @@ const AlbumCard = ({
         </Link>
         <button className="icon-container">
           {user && added ? (
-            <img src={inListSvg} alt="nella lista" className="icon" />
+            <img
+              onClick={handleRemoveFromList}
+              src={inListSvg}
+              alt="nella lista"
+              className="icon"
+            />
           ) : (
             <img
               onClick={handleMarkAsAdded}
@@ -118,10 +154,9 @@ const AlbumCard = ({
       {user && isListened ? (
         <button
           className="listened-button disabled"
-          onClick={handleMarkAsListened}
-          disabled={isListened}
+          onClick={handleMarkAsUnlistened}
         >
-          Ascoltato
+          Rimuovi da ascoltati
         </button>
       ) : (
         <button className="listened-button" onClick={handleMarkAsListened}>

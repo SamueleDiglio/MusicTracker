@@ -23,7 +23,11 @@ interface UserAlbumContextType {
   refreshAlbums: () => Promise<void>;
   isAlbumAdded: (albumId: string) => boolean;
   getAlbumStatus: (albumId: string) => {
-    id: any;
+    added: boolean;
+    listened: boolean;
+    docId?: string;
+  };
+  findAlbumByNameAndArtist: (albumName: string, artistName: string) => {
     added: boolean;
     listened: boolean;
     docId?: string;
@@ -37,6 +41,32 @@ const normalizeId = (str: string) =>
     .toLowerCase()
     .replace(/\s+/g, "-")
     .replace(/[^a-z0-9\-]/g, "");
+
+// Enhanced normalization for better matching
+const normalizeForComparison = (str: string) => {
+  return str
+    .toLowerCase()
+    .replace(/['\"""'']/g, "") // Remove all types of quotes and apostrophes
+    .replace(/[^\w\s]/g, "") // Remove all punctuation except word chars and spaces
+    .replace(/\s+/g, " ") // Normalize multiple spaces to single space
+    .trim();
+};
+
+// Check if two strings are similar enough to be considered the same
+const isSimilarString = (str1: string, str2: string): boolean => {
+  const normalized1 = normalizeForComparison(str1);
+  const normalized2 = normalizeForComparison(str2);
+  
+  // Exact match after normalization
+  if (normalized1 === normalized2) return true;
+  
+  // Check if one contains the other (for cases like "feat." additions)
+  if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
+    return true;
+  }
+  
+  return false;
+};
 
 export function UserAlbumProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -139,6 +169,21 @@ export function UserAlbumProvider({ children }: { children: ReactNode }) {
     };
   };
 
+  const findAlbumByNameAndArtist = (albumName: string, artistName: string) => {
+    // First try to find by exact normalized names
+    const album = userAlbums.find(
+      (userAlbum) =>
+        isSimilarString(userAlbum.albumName, albumName) &&
+        isSimilarString(userAlbum.artistName, artistName)
+    );
+
+    return {
+      added: !!album,
+      listened: album?.listened ?? false,
+      docId: album?.$id,
+    };
+  };
+
   const value: UserAlbumContextType = {
     userAlbums,
     loading,
@@ -149,6 +194,7 @@ export function UserAlbumProvider({ children }: { children: ReactNode }) {
     refreshAlbums,
     isAlbumAdded,
     getAlbumStatus,
+    findAlbumByNameAndArtist,
   };
 
   return (
