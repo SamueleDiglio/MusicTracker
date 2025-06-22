@@ -11,22 +11,35 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
-  const { user, login, register, logout, changePassword, changeEmail } = useAuth();
-  
-  const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState("");
+  const {
+    user,
+    login,
+    register,
+    logout,
+    changePassword,
+    changeEmail,
+    sendEmailVerification,
+  } = useAuth();
+
+  // Password change states
+  const [currentPasswordForPassword, setCurrentPasswordForPassword] =
+    useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordChangeVisible, setPasswordChangeVisible] = useState("none");
   const [rotateP, setRotateP] = useState("");
-  
+
+  // Email change states
   const [newEmail, setNewEmail] = useState("");
   const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
   const [emailChangeVisible, setEmailChangeVisible] = useState("none");
   const [rotateE, setRotateE] = useState("");
-  
+
+  // Loading states for better UX
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   const navigate = useNavigate();
 
@@ -66,22 +79,23 @@ const Profile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (isLoggingIn) return; 
-    
+
+    if (isLoggingIn) return; // Prevent double submission
+
+    // Password confirmation validation for registration
     if (isRegistering) {
       if (!name.trim()) {
-        alert("Inserisci un nome");
+        alert("Please enter a name");
         return;
       }
       if (password !== confirmPassword) {
-        alert("Le password non combaciano");
+        alert("Passwords do not match");
         return;
       }
     }
-    
+
     setIsLoggingIn(true);
-    
+
     try {
       if (isRegistering) {
         await register(email, password, name);
@@ -91,7 +105,7 @@ const Profile = () => {
       navigate("/");
     } catch (error: any) {
       console.error("Auth error:", error);
-      alert(error.message || "Autenticazione fallita");
+      alert(error.message || "Authentication failed");
     } finally {
       setIsLoggingIn(false);
     }
@@ -99,36 +113,38 @@ const Profile = () => {
 
   const handleChangePassword = async (): Promise<void> => {
     if (!user) {
-      alert("Devi essere loggato per cambiare la password");
+      alert("You must be logged in to change password");
       return;
     }
 
     if (!currentPasswordForPassword || !newPassword || !confirmNewPassword) {
-      alert("Completa tutti i campi");
+      alert("Please fill in all password fields");
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      alert("Le nuove password non combaciano");
+      alert("New passwords do not match");
       return;
     }
 
-    if (isChangingPassword) return;
-    
+    if (isChangingPassword) return; // Prevent double submission
+
     setIsChangingPassword(true);
 
     try {
       await changePassword(currentPasswordForPassword, newPassword);
+
+      // Clear form
       setCurrentPasswordForPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
       setPasswordChangeVisible("none");
       setRotateP("none");
-      
-      alert("Password cambiata con successo");
+
+      alert("Password changed successfully");
     } catch (error: any) {
       console.error("Password change error:", error);
-      alert(error.message || "Cambio password fallito");
+      alert(error.message || "Failed to change password");
     } finally {
       setIsChangingPassword(false);
     }
@@ -136,54 +152,80 @@ const Profile = () => {
 
   const handleChangeEmail = async (): Promise<void> => {
     if (!user) {
-      alert("Devi essere loggato per cambiare l'email");
+      alert("You must be logged in to change email");
       return;
     }
 
     if (!newEmail || !currentPasswordForEmail) {
-      alert("Completa entrambi i campi");
+      alert("Please fill in both fields");
       return;
     }
 
-    if (isChangingEmail) return;
-    
+    if (isChangingEmail) return; // Prevent double submission
+
     setIsChangingEmail(true);
 
     try {
       await changeEmail(newEmail, currentPasswordForEmail);
+
+      // Clear form
       setNewEmail("");
       setCurrentPasswordForEmail("");
       setEmailChangeVisible("none");
       setRotateE("none");
-      
-      alert("Email cambiata con successo");
+
+      alert("Email changed successfully");
     } catch (error: any) {
       console.error("Email change error:", error);
-      alert(error.message || "Cambio email fallito");
+      alert(error.message || "Failed to change email");
     } finally {
       setIsChangingEmail(false);
     }
   };
 
+  // Password strength and match indicators
   const getPasswordStrength = (password: string) => {
     if (password.length === 0) return "";
-    if (password.length < 8) return "Troppo corta";
-    
+    if (password.length < 8) return "Too short";
+
     let strength = 0;
     if (password.match(/[a-z]/)) strength++;
     if (password.match(/[A-Z]/)) strength++;
     if (password.match(/[0-9]/)) strength++;
     if (password.match(/[^a-zA-Z0-9]/)) strength++;
-    
-    if (strength < 2) return "Debole";
-    if (strength < 3) return "Media";
-    return "Forte";
+
+    if (strength < 2) return "Weak";
+    if (strength < 3) return "Medium";
+    return "Strong";
   };
 
   const getPasswordMatch = (password: string, confirmPassword: string) => {
     if (confirmPassword.length === 0) return "";
-    if (password === confirmPassword) return "Le password combaciano";
-    return "Le password non combaciano";
+    if (password === confirmPassword) return "Passwords match";
+    return "Passwords do not match";
+  };
+
+  const handleSendVerification = async () => {
+    if (!user) {
+      alert("You must be logged in to send verification email");
+      return;
+    }
+
+    if (isSendingVerification) return;
+
+    setIsSendingVerification(true);
+
+    try {
+      await sendEmailVerification();
+      alert(
+        "Verification email sent! Please check your inbox and spam folder."
+      );
+    } catch (error: any) {
+      console.error("Send verification error:", error);
+      alert(error.message || "Failed to send verification email");
+    } finally {
+      setIsSendingVerification(false);
+    }
   };
 
   if (user) {
@@ -193,7 +235,27 @@ const Profile = () => {
           <div className="profile-info-container">
             <Avatar />
             <h1 className="subtitle">{user.name}</h1>
-            <p>{user.email}</p>
+            <div className="email-info">
+              <p>{user.email}</p>
+              {user.emailVerification ? (
+                <span className="verification-badge">(Verificato)</span>
+              ) : (
+                <div className="verification-section">
+                  <span className="verification-badge unverified">
+                    (Non verificato)
+                  </span>
+                  <button
+                    className="listened-button"
+                    onClick={handleSendVerification}
+                    disabled={isSendingVerification}
+                  >
+                    {isSendingVerification
+                      ? "Invio..."
+                      : "Invia email di verifica"}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           <div className="profile-actions-container">
             <hr />
@@ -205,7 +267,10 @@ const Profile = () => {
               />
             </div>
             {emailChangeVisible === "flex" && (
-              <div className="change-block" style={{ display: emailChangeVisible }}>
+              <div
+                className="change-block"
+                style={{ display: emailChangeVisible }}
+              >
                 <input
                   className="input"
                   type="email"
@@ -225,7 +290,11 @@ const Profile = () => {
                 <button
                   className="listened-button"
                   onClick={handleChangeEmail}
-                  disabled={isChangingEmail}
+                  disabled={
+                    isChangingEmail ||
+                    !newEmail ||
+                    !currentPasswordForEmail
+                  }
                 >
                   {isChangingEmail ? "Cambiando..." : "Cambia email"}
                 </button>
@@ -240,13 +309,18 @@ const Profile = () => {
               />
             </div>
             {passwordChangeVisible === "flex" && (
-              <div className="change-block" style={{ display: passwordChangeVisible }}>
+              <div
+                className="change-block"
+                style={{ display: passwordChangeVisible }}
+              >
                 <input
                   className="input"
                   type="password"
                   placeholder="Inserisci password attuale"
                   value={currentPasswordForPassword}
-                  onChange={(e) => setCurrentPasswordForPassword(e.target.value)}
+                  onChange={(e) =>
+                    setCurrentPasswordForPassword(e.target.value)
+                  }
                   disabled={isChangingPassword}
                 />
                 <input
@@ -258,8 +332,12 @@ const Profile = () => {
                   disabled={isChangingPassword}
                 />
                 {newPassword && (
-                  <div className={`password-indicator strength-${getPasswordStrength(newPassword).toLowerCase()}`}>
-                    Forza: {getPasswordStrength(newPassword)}
+                  <div
+                    className={`password-indicator strength-${getPasswordStrength(
+                      newPassword
+                    ).toLowerCase()}`}
+                  >
+                    Strength: {getPasswordStrength(newPassword)}
                   </div>
                 )}
                 <input
@@ -271,14 +349,22 @@ const Profile = () => {
                   disabled={isChangingPassword}
                 />
                 {confirmNewPassword && (
-                  <div className={`password-indicator ${newPassword === confirmNewPassword ? 'match' : 'no-match'}`}>
+                  <div
+                    className={`password-indicator ${
+                      newPassword === confirmNewPassword ? "match" : "no-match"
+                    }`}
+                  >
                     {getPasswordMatch(newPassword, confirmNewPassword)}
                   </div>
                 )}
                 <button
                   className="listened-button"
                   onClick={handleChangePassword}
-                  disabled={isChangingPassword || newPassword !== confirmNewPassword || !newPassword}
+                  disabled={
+                    isChangingPassword ||
+                    newPassword !== confirmNewPassword ||
+                    !newPassword
+                  }
                 >
                   {isChangingPassword ? "Cambiando..." : "Cambia password"}
                 </button>
@@ -345,26 +431,41 @@ const Profile = () => {
           )}
 
           {isRegistering && password && (
-            <div className={`password-indicator strength-${getPasswordStrength(password).toLowerCase()}`}>
-              Forza: {getPasswordStrength(password)}
+            <div
+              className={`password-indicator strength-${getPasswordStrength(
+                password
+              ).toLowerCase()}`}
+            >
+              Strength: {getPasswordStrength(password)}
             </div>
           )}
 
           {isRegistering && confirmPassword && (
-            <div className={`password-indicator ${password === confirmPassword ? 'match' : 'no-match'}`}>
+            <div
+              className={`password-indicator ${
+                password === confirmPassword ? "match" : "no-match"
+              }`}
+            >
               {getPasswordMatch(password, confirmPassword)}
             </div>
           )}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="auth-button"
-            disabled={isLoggingIn || (isRegistering && password !== confirmPassword) || (isRegistering && !password)}
-          >
-            {isLoggingIn 
-              ? (isRegistering ? "Registrando..." : "Logging in...") 
-              : (isRegistering ? "Registrati" : "Login")
+            disabled={
+              isLoggingIn ||
+              (isRegistering && password !== confirmPassword) ||
+              (isRegistering && !password)
             }
+          >
+            {isLoggingIn
+              ? isRegistering
+                ? "Registrando..."
+                : "Logging in..."
+              : isRegistering
+              ? "Registrati"
+              : "Login"}
           </button>
         </form>
         <h1 className="or">oppure</h1>

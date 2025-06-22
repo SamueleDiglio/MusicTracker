@@ -5,7 +5,9 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Lists from "./pages/Lists";
 import AlbumDetails from "./pages/AlbumDetails";
+import EmailVerification from "./pages/EmailVerifications";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { UserAlbumProvider } from "./contexts/UserAlbumContext";
@@ -14,10 +16,32 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: "/", element: <Home /> },
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
+      },
       { path: "/Profile", element: <Profile /> },
-      { path: "/Lists", element: <Lists /> },
-      { path: "/AlbumDetails/:artist/:album", element: <AlbumDetails /> },
+      {
+        path: "/Lists",
+        element: (
+          <ProtectedRoute>
+            <Lists />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/AlbumDetails/:artist/:album",
+        element: (
+          <ProtectedRoute>
+            <AlbumDetails />
+          </ProtectedRoute>
+        ),
+      },
+      { path: "/verify-email", element: <EmailVerification /> }, // Keep verification page unprotected
     ],
   },
 ]);

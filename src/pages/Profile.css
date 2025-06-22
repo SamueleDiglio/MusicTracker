@@ -39,12 +39,38 @@
   padding: 16px;
 }
 
+.email-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.verification-badge {
+  font-size: 16px;
+  color: var(--grigio1);
+  margin-top: 8px;
+}
+
+.verification-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.unverified {
+  color: red;
+}
+
 hr {
   margin: 0;
 }
 
-.profile-info-container h1 {
+.profile-info-container .subtitle {
   margin-bottom: 4px;
+  margin-left: 0;
 }
 
 .profile-info-container p {
@@ -167,8 +193,8 @@ form {
   border-left: 3px solid #fd7e14;
 }
 
-.password-indicator.strength-forte, 
-.password-indicator.match{
+.password-indicator.strength-forte,
+.password-indicator.match {
   color: var(--verde);
   background: rgba(25, 135, 84, 0.1);
   border-left: 3px solid #198754;
