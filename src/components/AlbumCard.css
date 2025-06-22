@@ -46,6 +46,9 @@
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: 300;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .listened-button {

@@ -39,6 +39,10 @@
   padding: 16px;
 }
 
+hr {
+  margin: 0;
+}
+
 .profile-info-container h1 {
   margin-bottom: 4px;
 }
@@ -81,6 +85,8 @@ p {
   margin: auto;
   width: 100%;
   gap: 8px;
+  animation: slideDown 0.3s ease-out;
+  overflow: hidden;
 }
 
 .input {
@@ -94,6 +100,15 @@ p {
 
 .input::placeholder {
   color: var(--grigio1);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.input:invalid {
+  border-color: red;
 }
 
 .padded {
@@ -114,7 +129,6 @@ p {
   color: var(--nero2);
   font-size: 15px;
   font-weight: bold;
-
 }
 
 form {
@@ -129,6 +143,52 @@ form {
   text-align: center;
   font-size: 16px;
   margin: 16px 0;
+}
+
+.password-indicator {
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.password-indicator.strength-weak,
+.password-indicator.strength-too,
+.password-indicator.no-match {
+  color: red;
+  background: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid red;
+}
+
+.password-indicator.strength-medium {
+  color: #fd7e14;
+  background: rgba(253, 126, 20, 0.1);
+  border-left: 3px solid #fd7e14;
+}
+
+.password-indicator.strength-strong, 
+.password-indicator.match{
+  color: var(--verde);
+  background: rgba(25, 135, 84, 0.1);
+  border-left: 3px solid #198754;
+}
+
+.auth-button:disabled,
+.listened-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--grigio2);
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 300px;
+    opacity: 1;
+  }
 }
 
 @media (max-width: 784px) {

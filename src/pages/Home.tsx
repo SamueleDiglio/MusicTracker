@@ -11,12 +11,22 @@ const Home = () => {
     albums: popAlbums,
     loading: loadingPop,
     error: errorPop,
-  } = useLastApi("pop", 30);
+  } = useLastApi("pop", 45);
   const {
-    albums: rapAlbums,
-    loading: loadingRap,
-    error: errorRap,
-  } = useLastApi("rap", 30);
+    albums: rnbAlbums,
+    loading: loadingRnb,
+    error: errorRnb,
+  } = useLastApi("rnb", 45);
+  const {
+    albums: hipHopAlbums,
+    loading: loadingHipHop,
+    error: errorHipHop,
+  } = useLastApi("hip-hop", 45);
+  const {
+    albums: indieAlbums,
+    loading: loadingIndie,
+    error: errorIndie,
+  } = useLastApi("indie", 45);
 
   const { user } = useAuth();
   const { userAlbums, getAlbumStatus } = useUserAlbums();
@@ -60,6 +70,60 @@ const Home = () => {
       />
 
       <AlbumSlider
+        albums={hipHopAlbums}
+        renderAlbum={(album) => {
+          const mbid = album.mbid || `${album.name}-${album.artist.name}`;
+          const image = Array.isArray(album.image)
+            ? album.image.find(
+                (img: { size: string; ["#text"]: string }) =>
+                  img.size === "large"
+              )?.["#text"] || ""
+            : album.image;
+          return (
+            <AlbumCard
+              className="slider-card"
+              key={mbid}
+              mbid={mbid}
+              image={image}
+              albumName={album.name}
+              artistName={album.artist.name}
+              listened={getListenedStatus(mbid)}
+            />
+          );
+        }}
+        title="Top album Hip-Hop"
+        loading={loadingHipHop}
+        error={errorHipHop ?? undefined}
+      />
+
+      <AlbumSlider
+        albums={rnbAlbums}
+        renderAlbum={(album) => {
+          const mbid = album.mbid || `${album.name}-${album.artist.name}`;
+          const image = Array.isArray(album.image)
+            ? album.image.find(
+                (img: { size: string; ["#text"]: string }) =>
+                  img.size === "large"
+              )?.["#text"] || ""
+            : album.image;
+          return (
+            <AlbumCard
+              className="slider-card"
+              key={mbid}
+              mbid={mbid}
+              image={image}
+              albumName={album.name}
+              artistName={album.artist.name}
+              listened={getListenedStatus(mbid)}
+            />
+          );
+        }}
+        title="Top album R&B"
+        loading={loadingRnb}
+        error={errorRnb ?? undefined}
+      />
+
+      <AlbumSlider
         albums={popAlbums}
         renderAlbum={(album) => {
           const mbid = album.mbid || `${album.name}-${album.artist.name}`;
@@ -87,7 +151,7 @@ const Home = () => {
       />
 
       <AlbumSlider
-        albums={rapAlbums}
+        albums={indieAlbums}
         renderAlbum={(album) => {
           const mbid = album.mbid || `${album.name}-${album.artist.name}`;
           const image = Array.isArray(album.image)
@@ -108,9 +172,9 @@ const Home = () => {
             />
           );
         }}
-        title="Top album Rap"
-        loading={loadingRap}
-        error={errorRap ?? undefined}
+        title="Top album Indie"
+        loading={loadingIndie}
+        error={errorIndie ?? undefined}
       />
     </div>
   );
