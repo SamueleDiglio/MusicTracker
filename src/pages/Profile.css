@@ -83,6 +83,7 @@ p {
 .change-block {
   flex-direction: column;
   margin: auto;
+  margin-bottom: 8px;
   width: 100%;
   gap: 8px;
   animation: slideDown 0.3s ease-out;
@@ -152,21 +153,21 @@ form {
   font-weight: 500;
 }
 
-.password-indicator.strength-weak,
-.password-indicator.strength-too,
+.password-indicator.strength-debole,
+.password-indicator.strength-troppo,
 .password-indicator.no-match {
   color: red;
   background: rgba(220, 53, 69, 0.1);
   border-left: 3px solid red;
 }
 
-.password-indicator.strength-medium {
+.password-indicator.strength-media {
   color: #fd7e14;
   background: rgba(253, 126, 20, 0.1);
   border-left: 3px solid #fd7e14;
 }
 
-.password-indicator.strength-strong, 
+.password-indicator.strength-forte, 
 .password-indicator.match{
   color: var(--verde);
   background: rgba(25, 135, 84, 0.1);

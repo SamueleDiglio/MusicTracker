@@ -13,20 +13,17 @@ const Profile = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const { user, login, register, logout, changePassword, changeEmail } = useAuth();
   
-  // Password change states
   const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordChangeVisible, setPasswordChangeVisible] = useState("none");
   const [rotateP, setRotateP] = useState("");
   
-  // Email change states
   const [newEmail, setNewEmail] = useState("");
   const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
   const [emailChangeVisible, setEmailChangeVisible] = useState("none");
   const [rotateE, setRotateE] = useState("");
   
-  // Loading states for better UX
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -70,16 +67,15 @@ const Profile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoggingIn) return; // Prevent double submission
+    if (isLoggingIn) return; 
     
-    // Password confirmation validation for registration
     if (isRegistering) {
       if (!name.trim()) {
-        alert("Please enter a name");
+        alert("Inserisci un nome");
         return;
       }
       if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        alert("Le password non combaciano");
         return;
       }
     }
@@ -95,7 +91,7 @@ const Profile = () => {
       navigate("/");
     } catch (error: any) {
       console.error("Auth error:", error);
-      alert(error.message || "Authentication failed");
+      alert(error.message || "Autenticazione fallita");
     } finally {
       setIsLoggingIn(false);
     }
@@ -103,38 +99,36 @@ const Profile = () => {
 
   const handleChangePassword = async (): Promise<void> => {
     if (!user) {
-      alert("You must be logged in to change password");
+      alert("Devi essere loggato per cambiare la password");
       return;
     }
 
     if (!currentPasswordForPassword || !newPassword || !confirmNewPassword) {
-      alert("Please fill in all password fields");
+      alert("Completa tutti i campi");
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      alert("New passwords do not match");
+      alert("Le nuove password non combaciano");
       return;
     }
 
-    if (isChangingPassword) return; // Prevent double submission
+    if (isChangingPassword) return;
     
     setIsChangingPassword(true);
 
     try {
       await changePassword(currentPasswordForPassword, newPassword);
-      
-      // Clear form
       setCurrentPasswordForPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
       setPasswordChangeVisible("none");
       setRotateP("none");
       
-      alert("Password changed successfully");
+      alert("Password cambiata con successo");
     } catch (error: any) {
       console.error("Password change error:", error);
-      alert(error.message || "Failed to change password");
+      alert(error.message || "Cambio password fallito");
     } finally {
       setIsChangingPassword(false);
     }
@@ -142,41 +136,38 @@ const Profile = () => {
 
   const handleChangeEmail = async (): Promise<void> => {
     if (!user) {
-      alert("You must be logged in to change email");
+      alert("Devi essere loggato per cambiare l'email");
       return;
     }
 
     if (!newEmail || !currentPasswordForEmail) {
-      alert("Please fill in both fields");
+      alert("Completa entrambi i campi");
       return;
     }
 
-    if (isChangingEmail) return; // Prevent double submission
+    if (isChangingEmail) return;
     
     setIsChangingEmail(true);
 
     try {
       await changeEmail(newEmail, currentPasswordForEmail);
-      
-      // Clear form
       setNewEmail("");
       setCurrentPasswordForEmail("");
       setEmailChangeVisible("none");
       setRotateE("none");
       
-      alert("Email changed successfully");
+      alert("Email cambiata con successo");
     } catch (error: any) {
       console.error("Email change error:", error);
-      alert(error.message || "Failed to change email");
+      alert(error.message || "Cambio email fallito");
     } finally {
       setIsChangingEmail(false);
     }
   };
 
-  // Password strength and match indicators
   const getPasswordStrength = (password: string) => {
     if (password.length === 0) return "";
-    if (password.length < 8) return "Too short";
+    if (password.length < 8) return "Troppo corta";
     
     let strength = 0;
     if (password.match(/[a-z]/)) strength++;
@@ -184,15 +175,15 @@ const Profile = () => {
     if (password.match(/[0-9]/)) strength++;
     if (password.match(/[^a-zA-Z0-9]/)) strength++;
     
-    if (strength < 2) return "Weak";
-    if (strength < 3) return "Medium";
-    return "Strong";
+    if (strength < 2) return "Debole";
+    if (strength < 3) return "Media";
+    return "Forte";
   };
 
   const getPasswordMatch = (password: string, confirmPassword: string) => {
     if (confirmPassword.length === 0) return "";
-    if (password === confirmPassword) return "Passwords match";
-    return "Passwords do not match";
+    if (password === confirmPassword) return "Le password combaciano";
+    return "Le password non combaciano";
   };
 
   if (user) {
@@ -268,7 +259,7 @@ const Profile = () => {
                 />
                 {newPassword && (
                   <div className={`password-indicator strength-${getPasswordStrength(newPassword).toLowerCase()}`}>
-                    Strength: {getPasswordStrength(newPassword)}
+                    Forza: {getPasswordStrength(newPassword)}
                   </div>
                 )}
                 <input
@@ -355,7 +346,7 @@ const Profile = () => {
 
           {isRegistering && password && (
             <div className={`password-indicator strength-${getPasswordStrength(password).toLowerCase()}`}>
-              Strength: {getPasswordStrength(password)}
+              Forza: {getPasswordStrength(password)}
             </div>
           )}
 
