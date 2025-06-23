@@ -38,7 +38,7 @@
 }
 
 .desc {
-  margin-bottom: 16px;
+  margin-top: 0;
 }
 
 ol {
@@ -87,13 +87,17 @@ ol {
   .album-info-container {
     display: flex;
     align-items: center;
-    width: 100%;
     justify-content: center;
+    width: 100%;
     gap: 16px;
   }
 
   .album-info-container .subtitle {
     margin-bottom: 0;
+  }
+
+  .album-info-container .title {
+    margin-top: 0;
   }
 
   .details-buttons {
@@ -102,5 +106,13 @@ ol {
 
   .cover {
     width: 40vw;
+  }
+
+  .desc {
+    font-size: 14px;
+  }
+
+  li {
+    font-size: 14px;
   }
 }

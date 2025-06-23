@@ -47,4 +47,17 @@
   .slider-card {
     width: clamp(150px, 20vw, 216px);
   }
+
+  .slider-arrow-btn {
+    height: 40px;
+    width: 40px;
+    font-size: 20px;
+  }
+}
+
+
+@media (max-width: 320px) {
+  .slider-arrow-btn {
+    font-size: 20px;
+  }
 }

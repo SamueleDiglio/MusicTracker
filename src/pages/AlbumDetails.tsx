@@ -224,7 +224,7 @@ const AlbumDetails = () => {
         <div className="album-info">
           <h1 className="subtitle">Descrizione:</h1>
           {details.wiki?.summary ? (
-            <div
+            <p
               className="desc"
               dangerouslySetInnerHTML={{
                 __html: details.wiki.summary.replace(

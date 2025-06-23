@@ -242,7 +242,7 @@ const Layout = () => {
           )}
         </ul>
 
-        {!isMobile && (
+        {user?.emailVerification && !isMobile && (
           <div className="search-container">
             <div className="search-wrapper">
               <BsSearch className="search-icon-inside" />
@@ -353,7 +353,7 @@ const Layout = () => {
         </ul>
       </nav>
 
-      {mobileSearchVisible && (
+      {user?.emailVerification && mobileSearchVisible && (
         <div className="search-container mobile-search-container">
           <div className="search-wrapper">
             <BsSearch className="search-icon-inside" />
