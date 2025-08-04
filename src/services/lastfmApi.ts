@@ -14,6 +14,20 @@ export interface Album {
   wiki?: { summary: string };
 }
 
+export interface Artist {
+  name: string;
+  image: { "#text": string; size: string }[];
+  bio: {
+    summary: string;
+  };
+  ontour: number;
+  similar: {
+    artist: {
+      name: string;
+    }[];
+  };
+}
+
 const API_KEY = import.meta.env.VITE_LASTFM_API_KEY;
 const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
 
@@ -73,3 +87,34 @@ export async function getAlbumDetailsByName(artist: string, album: string) {
     throw new Error("Errore nella richiesta API");
   }
 }
+
+export async function getArtistDetails(artist: string) {
+  try {
+    const data = await fetchFromLastFM({
+      method: "artist.getinfo",
+      artist: artist,
+    });
+
+    console.log("API Response:", data);
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch album details:", error);
+    throw new Error("Errore nella richiesta API");
+  }
+}
+
+export async function fetchArtistAlbums(artist: string) {
+  try {
+    const data = await fetchFromLastFM({
+      method: "artist.getTopAlbums",
+      artist: artist,
+    });
+
+    console.log("API Response:", data);
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch album details:", error);
+    throw new Error("Errore nella richiesta API");
+  }
+}
+

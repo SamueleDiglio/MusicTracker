@@ -150,7 +150,12 @@ const AlbumCard = ({
         </button>
       </div>
       <p className="album-title">{albumName}</p>
-      <p className="album-artist">{artistName}</p>
+      <Link
+        to={`/ArtistPage/${encodedArtist}`}
+        title={`vai a ${artistName}`}
+      >
+        <p className="album-artist">{artistName}</p>
+      </Link>
       {user && isListened ? (
         <button
           className="listened-button disabled"

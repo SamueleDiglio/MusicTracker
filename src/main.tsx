@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Lists from "./pages/Lists";
 import AlbumDetails from "./pages/AlbumDetails";
+import ArtistPage from "./pages/ArtistPage";
 import EmailVerification from "./pages/EmailVerifications";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -38,6 +39,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AlbumDetails />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/ArtistPage/:artist",
+        element: (
+          <ProtectedRoute>
+            <ArtistPage />
           </ProtectedRoute>
         ),
       },
