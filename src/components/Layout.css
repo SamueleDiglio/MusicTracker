@@ -105,6 +105,26 @@
   opacity: 0.6;
 }
 
+.search-toggle-section {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.select-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  color: var(--nero);
+  cursor: pointer;
+}
+
+.select-button.active {
+  background: var(--verde);
+}
+
 .search-results {
   position: fixed;
   top: 72px;

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useLastApiAlbum } from "../hooks/useLastApi";
 import { useAuth } from "../contexts/AuthContext";
 import { useUserAlbums } from "../contexts/UserAlbumContext";
@@ -186,7 +186,12 @@ const AlbumDetails = () => {
           )}
           <div>
             <h1 className="title">{details.name}</h1>
-            <h1 className="subtitle">{details.artist}</h1>
+            <Link
+              to={`/ArtistPage/${decodedArtist}`}
+              title={`vai a ${decodedArtist}`}
+            >
+              <h1 className="subtitle">{details.artist}</h1>
+            </Link>
 
             <div className="details-buttons">
               {user && albumStatus.added ? (

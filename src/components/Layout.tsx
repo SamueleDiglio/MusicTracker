@@ -23,8 +23,10 @@ const normalizeId = (str: string) =>
 const Layout = () => {
   const { user } = useAuth();
   const { getAlbumStatus, addAlbum, updateAlbumStatus } = useUserAlbums();
+  const [searchTab, setSearchTab] = useState<"album" | "artist">("album");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [artistResults, setArtistResults] = useState<any[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [transparent, setTransparent] = useState(true);
@@ -52,6 +54,7 @@ const Layout = () => {
   useEffect(() => {
     if (!searchTerm.trim()) {
       setSearchResults([]);
+      setArtistResults([]);
       setSearchError(null);
       setSearchLoading(false);
       return;
@@ -62,8 +65,12 @@ const Layout = () => {
 
     const timeout = setTimeout(async () => {
       try {
-        const results = await albumService.searchAlbums(searchTerm.trim());
-        setSearchResults(Array.isArray(results) ? results : []);
+        const [albums, artists] = await Promise.all([
+          albumService.searchAlbums(searchTerm.trim()),
+          albumService.searchArtist(searchTerm.trim()), // <-- implement this
+        ]);
+        setSearchResults(Array.isArray(albums) ? albums : []);
+        setArtistResults(Array.isArray(artists) ? artists : []);
       } catch {
         setSearchResults([]);
         setSearchError("Errore nella ricerca.");
@@ -139,8 +146,12 @@ const Layout = () => {
   const refreshSearchResults = async () => {
     if (!searchTerm.trim()) return;
     try {
-      const results = await albumService.searchAlbums(searchTerm.trim());
-      setSearchResults(Array.isArray(results) ? results : []);
+      const [albums, artists] = await Promise.all([
+        albumService.searchAlbums(searchTerm.trim()),
+        albumService.searchArtist(searchTerm.trim()), // <-- implement this
+      ]);
+      setSearchResults(Array.isArray(albums) ? albums : []);
+      setArtistResults(Array.isArray(artists) ? artists : []);
     } catch {
       setSearchResults([]);
       setSearchError("Errore nella ricerca.");
@@ -187,7 +198,12 @@ const Layout = () => {
             <h3 className="search-result-title">
               {album.name || "Sconosciuto"}
             </h3>
-            <h4 className="search-result-artist">{artistName}</h4>
+            <Link
+              to={`/ArtistPage/${artistName}`}
+              title={`vai a ${artistName}`}
+            >
+              <h4 className="search-result-artist">{artistName}</h4>
+            </Link>
             <div className="search-result-buttons">
               {user && (
                 <button
@@ -287,11 +303,53 @@ const Layout = () => {
         <div className="search-results desktop-results">
           {searchLoading && <p>Caricamento risultati...</p>}
           {searchError && <p style={{ color: "red" }}>{searchError}</p>}
-          {searchResults.length > 0 && (
+          <div className="search-toggle-section">
+            <button
+              className={`select-button ${
+                searchTab === "album" ? "active" : ""
+              }`}
+              onClick={() => setSearchTab("album")}
+            >
+              Album
+            </button>
+            <button
+              className={`select-button ${
+                searchTab === "artist" ? "active" : ""
+              }`}
+              onClick={() => setSearchTab("artist")}
+            >
+              Artisti
+            </button>
+          </div>
+          {searchTab === "album" && searchResults.length > 0 && (
             <ul className="search-results-list">
               {searchResults.map((album, idx) =>
                 renderSearchResult(album, idx, "search")
               )}
+            </ul>
+          )}
+          {searchTab === "artist" && artistResults.length > 0 && (
+            <ul className="search-results-list">
+              {artistResults.map((artist, idx) => (
+                <li key={`artist-${idx}`}>
+                  <Link
+                    to={`/ArtistPage/${encodeURIComponent(artist.name)}`}
+                    className="search-results-content"
+                  >
+                    <img
+                      src={artist.image?.[1]?.["#text"] || ""}
+                      alt={artist.name}
+                      className="search-result-image"
+                    />
+                    <div className="search-result-info">
+                      <h3 className="search-result-title">{artist.name}</h3>
+                      <span>Artista</span>
+                    </div>
+                  </Link>
+
+                  <hr className="divisor" />
+                </li>
+              ))}
             </ul>
           )}
         </div>
@@ -380,11 +438,56 @@ const Layout = () => {
             <div className="search-results mobile-results">
               {searchLoading && <p>Caricamento risultati...</p>}
               {searchError && <p style={{ color: "red" }}>{searchError}</p>}
-              {searchResults.length > 0 && (
+              <div className="search-toggle-section">
+                <button
+                  className={`select-button ${
+                    searchTab === "album" ? "active" : ""
+                  }`}
+                  onClick={() => setSearchTab("album")}
+                >
+                  Album
+                </button>
+                <button
+                  className={`select-button ${
+                    searchTab === "artist" ? "active" : ""
+                  }`}
+                  onClick={() => setSearchTab("artist")}
+                >
+                  Artisti
+                </button>
+              </div>
+              {searchTab === "album" && searchResults.length > 0 && (
                 <ul className="search-results-list">
                   {searchResults.map((album, idx) =>
                     renderSearchResult(album, idx, "search-mobile")
                   )}
+                </ul>
+              )}
+              {searchTab === "artist" && artistResults.length > 0 && (
+                <ul className="search-results-list">
+                  {artistResults.map((artist, idx) => (
+                    <li key={`artist-${idx}`}>
+                      <Link
+                        to={`/ArtistPage/${encodeURIComponent(artist.name)}`}
+                        onClick={() => {
+                          setSearchTerm("");
+                          setMobileSearchVisible(false);
+                        }}
+                        className="search-results-content"
+                      >
+                        <img
+                          src={artist.image?.[1]?.["#text"] || ""}
+                          alt={artist.name}
+                          className="search-result-image"
+                        />
+                        <div className="search-result-info">
+                          <h3 className="search-result-title">{artist.name}</h3>
+                          <span>Artista</span>
+                        </div>
+                      </Link>
+                      <hr className="divisor" />
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>

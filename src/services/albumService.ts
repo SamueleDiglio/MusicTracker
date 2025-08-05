@@ -13,7 +13,6 @@ export interface UserAlbum {
   listened: boolean;
 }
 
-// Funzione per normalizzare albumId (minuscolo, senza spazi, rimuove suffissi -0, -1, ...)
 const normalizeAlbumId = (albumId: string) => {
   let normalized = albumId.trim().toLowerCase();
   normalized = normalized.replace(/-\d+$/, "");
@@ -23,7 +22,6 @@ const normalizeAlbumId = (albumId: string) => {
 export const albumService = {
   async addUserAlbum(userId: string, album: UserAlbum) {
     try {
-      // Normalizzo l'albumId prima di cercare duplicati e salvarlo
       const normalizedAlbumId = normalizeAlbumId(album.albumId);
 
       const existing = await databases.listDocuments(
@@ -141,13 +139,37 @@ export const albumService = {
       if (!response.ok) throw new Error("API request failed");
 
       const data = await response.json();
-      // Adapt this mapping to your AlbumCard props structure
       return (
         data.results.albummatches.album.map((album: any) => ({
           mbid: album.mbid,
           name: album.name,
           artist: { name: album.artist },
-          image: album.image, // array of images with different sizes
+          image: album.image,
+        })) || []
+      );
+    } catch (error) {
+      console.error("Error searching albums:", error);
+      throw error;
+    }
+  },
+
+  async searchArtist(query: string) {
+    try {
+      const API_KEY = import.meta.env.VITE_LASTFM_API_KEY;
+      const url = `https://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${encodeURIComponent(
+        query
+      )}&api_key=${API_KEY}&format=json&limit=30`;
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("API request failed");
+
+      const data = await response.json();
+      return (
+        data.results.artistmatches.artist.map((artist: any) => ({
+          mbid: artist.mbid,
+          name: artist.name,
+          image: artist.image,
+          url: artist.url,
         })) || []
       );
     } catch (error) {

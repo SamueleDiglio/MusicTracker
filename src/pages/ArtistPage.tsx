@@ -11,7 +11,7 @@ const ArtistPage = () => {
   const decodedArtist = artist ? decodeURIComponent(artist) : "";
   const { details, loading, error } = useLastApiArtist(decodedArtist);
   const { user } = useAuth();
-  const { userAlbums, getAlbumStatus } = useUserAlbums();
+  const { getAlbumStatus } = useUserAlbums();
   const {
     albums: artistAlbums,
     loading: loadingArtistAlbums,
