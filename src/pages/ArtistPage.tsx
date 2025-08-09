@@ -5,6 +5,7 @@ import { useUserAlbums } from "../contexts/UserAlbumContext";
 import { useCallback } from "react";
 import AlbumSlider from "../components/AlbumSlider";
 import AlbumCard from "../components/AlbumCard";
+import "./ArtistPage.css";
 
 const ArtistPage = () => {
   const { artist } = useParams<{ artist: string }>();
@@ -39,36 +40,53 @@ const ArtistPage = () => {
 
   return (
     <div className="page-container">
-      {imageUrl ? (
-        <img src={imageUrl} alt={details.name} />
-      ) : (
-        <div>
-          <p>Immagine non disponibile</p>
+      <div className="artist-details-content">
+        <div className="artist-info-container">
+          {imageUrl ? (
+            <img className="artist-propic" src={imageUrl} alt={details.name} />
+          ) : (
+            <div>
+              <p>Immagine non disponibile</p>
+            </div>
+          )}
+          <h1>{details.name}</h1>
         </div>
-      )}
-      <h1>{details.name}</h1>
-      {details.bio?.summary ? (
-        <p
-          className="desc"
-          dangerouslySetInnerHTML={{
-            __html: details.bio.summary.replace(
-              /(<a[^>]*>read more)/gi,
-              "... $1"
-            ),
-          }}
-        />
-      ) : (
-        <p className="desc">Non è presente alcuna descrizione.</p>
-      )}
-      {details.ontour == 1 ? <p>In tour</p> : <p>Non in tour</p>}
+        <div className="album-info">
+          <h1 className="subtitle">Descrizione:</h1>
+          {details.bio?.summary ? (
+            <p
+              className="desc"
+              dangerouslySetInnerHTML={{
+                __html: details.bio.summary.replace(
+                  /(<a[^>]*>read more)/gi,
+                  "... $1"
+                ),
+              }}
+            />
+          ) : (
+            <p className="desc">Non è presente alcuna descrizione.</p>
+          )}
 
-      <h1>Artisti simili</h1>
-      {details.similar.artist.map((artist) => (
-        <Link to={`/ArtistPage/${artist.name}`} title={`vai a ${artist.name}`}>
-          <p key={artist.name}>{artist.name}</p>
-        </Link>
-      ))}
+          <h1 className="subtitle">Tour</h1>
+          {details.ontour == 1 ? (
+            <p className="desc">Attualmente in tour</p>
+          ) : (
+            <p className="desc">Attualmente non in tour</p>
+          )}
 
+          <h1 className="subtitle">Artisti simili:</h1>
+          {details.similar.artist.map((artist) => (
+            <Link
+              to={`/ArtistPage/${artist.name}`}
+              title={`vai a ${artist.name}`}
+            >
+              <p key={artist.name} className="desc">
+                {artist.name}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </div>
       <AlbumSlider
         albums={artistAlbums}
         renderAlbum={(album) => {
@@ -91,15 +109,7 @@ const ArtistPage = () => {
           );
         }}
         title="Discografia dell'artista (comprende anche singoli)"
-        showIfEmpty={
-          user ? (
-            <p>
-              Non è presente alcun album nella tua lista. Aggiungine qualcuno.
-            </p>
-          ) : (
-            <p>Accedi per visualizzare la tua lista</p>
-          )
-        }
+        showIfEmpty="Discografia non disponibile"
       />
     </div>
   );
